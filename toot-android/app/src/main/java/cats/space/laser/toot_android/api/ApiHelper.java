@@ -429,7 +429,7 @@ public class ApiHelper {
     }
 
     private static String getAbsoluteUrl(String relativeUrl) {
-        return relativeUrl;
+        return Constants.API_URL+relativeUrl;
     }
 
     private static void setHttpRequestHeader(HttpRequestBase httpRequest, Date timestamp,
@@ -479,7 +479,8 @@ public class ApiHelper {
     private static String retryRequest(HttpRequestBase request, HttpClient client,
                                              Context context) throws IOException {
 
-        return "";
+        HttpResponse response = client.execute(request);
+        return parseHttpResponse(response);
     }
 
 
