@@ -28,7 +28,7 @@ public class TootServiceImpl implements TootService {
 
         String url = ApiHelper.TOOT_OTW;
         try {
-            ApiHelper.put(url, tootJson, context, ApiBase.class, null);
+            ApiHelper.post(url, tootJson, context, ApiBase.class, listener, null);
         } catch (Exception e) {
             throw new ApiException(EXCEPTION_MESSAGE, null);
         }
@@ -44,7 +44,7 @@ public class TootServiceImpl implements TootService {
 
         String url = ApiHelper.TOOT_HERE;
         try {
-            ApiHelper.put(url, tootJson, context, ApiBase.class, null);
+            ApiHelper.post(url, tootJson, context, ApiBase.class, listener, null);
         } catch (Exception e) {
             throw new ApiException(EXCEPTION_MESSAGE, null);
         }
