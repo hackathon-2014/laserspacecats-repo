@@ -2,6 +2,7 @@ package cats.space.laser.toot_android.api;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -50,7 +51,6 @@ public class ApiHelper {
     public static final String GET_USER = "/user";
     public static final String CREATE_USER = "/user";
     public static final String UPDATE_USER = "/user";
-    public static final String SEND_TOOT = "/message";
 
     public static final String TOOT_OTW = "/message/otw";
     public static final String TOOT_HERE = "/message/toot";
@@ -287,6 +287,8 @@ public class ApiHelper {
             Log.e("error", "Could not execute API HttpRequest.", e);
         } catch (JsonSyntaxException e) {
             Log.e("error", "Could not parse JSON response.", e);
+        } catch (Exception e) {
+            Log.e("error", e.getMessage());
         }
 
         return result;
@@ -430,7 +432,7 @@ public class ApiHelper {
     }
 
     private static String getAbsoluteUrl(String relativeUrl) {
-        return relativeUrl;
+        return Constants.API_URL+relativeUrl;
     }
 
     private static void setHttpRequestHeader(HttpRequestBase httpRequest, Date timestamp,
@@ -480,7 +482,8 @@ public class ApiHelper {
     private static String retryRequest(HttpRequestBase request, HttpClient client,
                                              Context context) throws IOException {
 
-        return "";
+        HttpResponse response = client.execute(request);
+        return parseHttpResponse(response);
     }
 
 

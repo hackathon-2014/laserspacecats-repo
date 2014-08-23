@@ -34,7 +34,8 @@ public class SharedPreferencesUtil {
     public static void saveUser(User user) {
         SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
         sharedPreferencesEditor.putString("username",user.getUsername());
-        sharedPreferencesEditor.putString("userId",user.getId());
+        sharedPreferencesEditor.putString("userId",user.get_id());
+        sharedPreferencesEditor.putString("registrationId", user.getRegistrationId());
         sharedPreferencesEditor.putString("password",user.getPassword());
         sharedPreferencesEditor.commit();
     }
@@ -54,11 +55,13 @@ public class SharedPreferencesUtil {
         if (SharedPreferencesUtil.isLoggedIn()) {
             String username = sharedPreferences.getString("username", null);
             String id = sharedPreferences.getString("userId", null);
+            String registrationId = sharedPreferences.getString("registrationId",null);
             String password = sharedPreferences.getString("password", null);
 
             User user = new User();
             user.setUsername(username);
-            user.setId(id);
+            user.set_id(id);
+            user.setRegistrationId(registrationId);
             user.setPassword(password);
             return user;
 

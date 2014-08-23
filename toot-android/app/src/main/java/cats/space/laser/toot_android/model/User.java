@@ -8,7 +8,8 @@ import java.util.List;
  */
 public class User extends ApiBase {
 
-    private String id;
+    private String __v;
+    private String _id;
     private String username;
     private String registrationId;
     private String password;
@@ -22,12 +23,20 @@ public class User extends ApiBase {
         this.friends = friends;
     }
 
-    public String getId() {
-        return id;
+    public String get_id() {
+        return _id;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void set_id(String _id) {
+        this._id = _id;
+    }
+
+    public String get__v() {
+        return __v;
+    }
+
+    public void set__v(String __v) {
+        this.__v = __v;
     }
 
     public String getUsername() {

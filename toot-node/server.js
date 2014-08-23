@@ -4,8 +4,6 @@ var util = require('util');
 var gcmService = require('./services/gcmService');
 var mongoose = require('mongoose');
 var restify = require('restify');
-var gcmService = require('./services/gcmService');
-
 var models = require('./models');
 
 
