@@ -29,11 +29,24 @@
         style="@style/password"
         android:hint="PASSWORD"/>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+    <Button
+        android:id="@+id/sign_up"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        style="@style/sign_up"
+        android:text="sign up"/>
+
     <Button
         android:id="@+id/sign_in"
+        android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/sign_in"
         android:text="sign in"/>
-
+    </LinearLayout>
 </LinearLayout>

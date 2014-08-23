@@ -55,7 +55,7 @@ public class MainActivity extends Activity {
         add.setOnClickListener(new AddOnClickListener());
 
         try {
-            userService.getUsersAsynchronous(user, context, new GetUsersListener());
+            userService.getFriendsAsynchronous(user, context, new GetUsersListener());
         } catch (ApiException e) {
             e.printStackTrace();
         }
@@ -88,6 +88,7 @@ public class MainActivity extends Activity {
                     switch(which){
                         case 0:
                             // log out
+                            SharedPreferencesUtil.clearSharedPrefs();
                             SharedPreferencesUtil.setLoggedIn(false);
                             Intent intent = new Intent(context,LoginActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -109,19 +110,21 @@ public class MainActivity extends Activity {
         @Override
         public void onTaskComplete(ApiBase result) {
 
-            // get users
-            UsersList users;
-            try {
-                users = (UsersList) ApiResponseUtil.parseResponse(result, UsersList.class);
-            } catch (ApiException e) {
-                return;
-            }
+            if (result!=null) {
+                // get friends
+                UsersList users;
+                try {
+                    users = (UsersList) ApiResponseUtil.parseResponse(result, UsersList.class);
+                } catch (ApiException e) {
+                    return;
+                }
 
-            // populate adapter and attached it to the list view
-            userAdapter = new UserAdapter(context, R.layout.user_row, Arrays.asList(users.getUsers()));
+                // populate adapter and attached it to the list view
+                userAdapter = new UserAdapter(context, R.layout.user_row, Arrays.asList(users.getUsers()));
 
-            if (users.getUsers().length!=0) {
-                userListView.setAdapter(userAdapter);
+                if (users.getUsers().length != 0) {
+                    userListView.setAdapter(userAdapter);
+                }
             }
 
         }

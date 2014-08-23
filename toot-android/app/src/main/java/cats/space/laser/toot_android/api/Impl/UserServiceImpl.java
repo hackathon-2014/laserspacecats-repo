@@ -2,6 +2,9 @@ package cats.space.laser.toot_android.api.Impl;
 
 import android.content.Context;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import cats.space.laser.toot_android.api.ApiException;
 import cats.space.laser.toot_android.api.ApiHelper;
 import cats.space.laser.toot_android.api.UserService;
