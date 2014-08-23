@@ -36,7 +36,7 @@ import java.net.SocketTimeoutException;
 import java.util.Date;
 import java.util.Map;
 
-import cats.space.laser.toot_android.api.Impl.TokenServiceImpl;
+import cats.space.laser.toot_android.Constants;
 import cats.space.laser.toot_android.listener.AsyncTaskCompleteListener;
 import cats.space.laser.toot_android.model.OAuthTokenResponse;
 
