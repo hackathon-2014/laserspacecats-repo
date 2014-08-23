@@ -10,6 +10,7 @@ style="@style/user_row">
         android:layout_height="wrap_content"
         style="@style/username_row"
         android:text="username"
+        android:ellipsize="end"
         android:layout_alignParentLeft="true"/>
 
     <FrameLayout

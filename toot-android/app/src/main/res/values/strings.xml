@@ -4,5 +4,6 @@
     <string name="invalid_username">Please enter a username and password.</string>
     <string name="invalid_login">Login failed - please check your username and password.</string>
     <string name="add_success">User added</string>
+    <string name="remove_success">User removed</string>
     <string name="app_name">toot</string>
 </resources>

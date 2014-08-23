@@ -90,7 +90,7 @@ function sendToot(req, res, next) {
                     eta: req.headers.eta
                 }
             );
-            gcmService.sendMessage(obj.registrationId, toot, function callback(err, data) {
+            gcmService.sendMessage(obj.registrationId, obj.username, toot, function callback(err, data) {
                 if(err) {
                     req.log.warn(err, 'failed to send toot');
                     res.send(400, toot);

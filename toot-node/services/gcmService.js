@@ -2,7 +2,7 @@ var gcm = require('node-gcm');
 var mongoose = require('mongoose');
 var gcmService = {};
 
-gcmService.sendMessage = function sendMessage(regId, toot, callback) {
+gcmService.sendMessage = function sendMessage(regId, userName, toot, callback) {
 
     var message = new gcm.Message();
     var sender = new gcm.Sender('AIzaSyDAA_igAhJYYSym4rv0127lkVpWfL9tCHg');
@@ -15,9 +15,9 @@ gcmService.sendMessage = function sendMessage(regId, toot, callback) {
     } else if (toot.classification === 'beer') {
         message.addData('message','Bring Beer!!');
     }
-    message.addData('title','Toot');
+    message.addData('title',userName);
+//    message.addData('from', userName);
     message.addData('msgcnt','10');
-    message.collapseKey = 'demo';
     message.delayWhileIdle = true;
     message.timeToLive = 3;
 
@@ -28,7 +28,7 @@ gcmService.sendMessage = function sendMessage(regId, toot, callback) {
      * Parameters: message-literal, registrationIds-array, No. of retries, callback-function
      */
     sender.send(message, registrationIds, 4, function (result) {
-        if(result === 401) {
+        if(result === 401 || result === 400) {
             callback("ERROR", null);
             console.log("toot error");
         } else {

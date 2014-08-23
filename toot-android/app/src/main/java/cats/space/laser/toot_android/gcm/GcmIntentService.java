@@ -12,6 +12,8 @@ import android.support.v4.app.NotificationCompat;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
+import java.util.Random;
+
 import cats.space.laser.toot_android.MainActivity;
 import cats.space.laser.toot_android.R;
 
@@ -40,9 +42,9 @@ public class GcmIntentService extends IntentService {
             if (GoogleCloudMessaging.
                     MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 String message = extras.getString("message");
-                String url = extras.getString("url");
+                String userName = intent.getStringExtra("title");
 
-                sendNotification(message, url);
+                sendNotification(message, userName);
             }
         }
         GcmBroadcastReceiver.completeWakefulIntent(intent);
@@ -51,7 +53,7 @@ public class GcmIntentService extends IntentService {
     // Put the message into a notification and post it.
     // This is just one simple example of what you might choose to do with
     // a GCM message.
-    private void sendNotification(String message, String url) {
+    private void sendNotification(String message, String userName) {
         mNotificationManager = (NotificationManager)
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -67,10 +69,10 @@ public class GcmIntentService extends IntentService {
         // build the notification
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setSmallIcon(R.drawable.icon)
                         .setAutoCancel(true)
                         .setLights(0xFF73da66, 1000, 2000)
-                        .setContentTitle("Cat Notification")
+                        .setContentTitle(userName)
                         .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(message))
                         .setContentText(message);
@@ -81,6 +83,8 @@ public class GcmIntentService extends IntentService {
         Notification notification = mBuilder.build();
 //        notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
 
-        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+        Random r=new Random();
+        int notificationInt =r.nextInt(1000000);
+        mNotificationManager.notify(notificationInt, mBuilder.build());
     }
 }
