@@ -101,28 +101,8 @@ public class UserAdapter extends ArrayAdapter<User> {
         holder.tootButton.setOnClickListener(new TootOnClickListener(user.get_id(), holder.dialog));
         holder.beerButton.setOnClickListener(new BeerOnClickListener(user.get_id(), holder.dialog));
 
-        final UserHolder finalHolder = holder;
-        row.setOnLongClickListener(new View.OnLongClickListener(){
-            @Override
-            public boolean onLongClick(View v) {
-
-                RemoveFriend userToRemove = new RemoveFriend();
-                userToRemove.setFriend(user.get_id());
-                userToRemove.setId(SharedPreferencesUtil.getUser().get_id());
-
-                UserService userService = new UserServiceImpl();
-
-                ProgressDialog dialog = DialogUtil.getProgressDialog(context, "Removing user...");
-                dialog.show();
-                try {
-                    userService.removeFriendsAsynchronous(userToRemove, context, new RemoveFriendsResponseListener(dialog));
-                } catch (ApiException e) {
-                    e.printStackTrace();
-                }
-                return true;
-            }
-
-        });
+        holder.username.setOnLongClickListener(new RemoveUserOnClickListener(user.get_id()));
+        row.setOnLongClickListener(new RemoveUserOnClickListener(user.get_id()));
 
         return row;
     }
@@ -137,6 +117,35 @@ public class UserAdapter extends ArrayAdapter<User> {
         ImageButton omwButton;
         ImageButton tootButton;
         ProgressDialog dialog;
+    }
+
+    private class RemoveUserOnClickListener implements View.OnLongClickListener {
+
+        String id;
+
+        public RemoveUserOnClickListener(String id) {
+            this.id = id;
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+
+            RemoveFriend userToRemove = new RemoveFriend();
+            userToRemove.setFriend(id);
+            userToRemove.setId(SharedPreferencesUtil.getUser().get_id());
+
+            UserService userService = new UserServiceImpl();
+
+            ProgressDialog dialog = DialogUtil.getProgressDialog(context, "Removing user...");
+            dialog.show();
+            try {
+                userService.removeFriendsAsynchronous(userToRemove, context, new RemoveFriendsResponseListener(dialog));
+            } catch (ApiException e) {
+                e.printStackTrace();
+            }
+            return true;
+        }
+
     }
 
     private class RemoveFriendsResponseListener implements AsyncTaskCompleteListener<ApiBase> {

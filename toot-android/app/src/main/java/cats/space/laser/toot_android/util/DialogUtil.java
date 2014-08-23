@@ -1,9 +1,17 @@
 package cats.space.laser.toot_android.util;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+
+import cats.space.laser.toot_android.MainActivity;
+import cats.space.laser.toot_android.R;
 
 /**
  * Created by whitneychampion on 8/23/14.
@@ -28,9 +36,4 @@ public class DialogUtil {
         return progressDialog;
     }
 
-    public static void hideSpinner(ProgressDialog progressDialog) {
-        if (progressDialog.isShowing()) {
-            progressDialog.hide();
-        }
-    }
 }

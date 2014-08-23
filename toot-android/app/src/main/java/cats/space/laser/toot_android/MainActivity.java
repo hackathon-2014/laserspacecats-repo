@@ -8,7 +8,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
@@ -84,12 +86,38 @@ public class MainActivity extends Activity {
                     dialog.dismiss();
                     switch(which){
                         case 0:
-                            // log out
-                            SharedPreferencesUtil.clearSharedPrefs();
-                            SharedPreferencesUtil.setLoggedIn(false);
-                            Intent intent = new Intent(context,LoginActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
+
+                            LayoutInflater inflater =
+                                    (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                            View view = inflater.inflate(R.layout.dialog_logout, null);
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+                            AlertDialog logoutDialog = builder.create();
+
+                            logoutDialog.setView(view, 0, 0, 0, 0);
+
+                            Button cancelButton = (Button) view.findViewById(R.id.cancel);
+                            final Dialog finalDialog = logoutDialog;
+                            cancelButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    finalDialog.dismiss();
+                                }
+                            });
+                            Button logoutButton = (Button) view.findViewById(R.id.logout);
+                            logoutButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    // log out
+                                    SharedPreferencesUtil.clearSharedPrefs();
+                                    SharedPreferencesUtil.setLoggedIn(false);
+                                    Intent intent = new Intent(context,LoginActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
+                                }
+                            });
+
                             break;
                     }
                 }

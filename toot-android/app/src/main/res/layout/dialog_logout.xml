@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+ <LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:background="@color/turquoise"
+        android:id="@+id/dialogTitle">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:text="Logout"/>
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+        android:id="@+id/editTxt"
+        android:textColor="@color/dark_gray"
+        android:text="Are you sure you want to logout?"
+        android:gravity="left"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/cancel"
+            style="@style/sign_in"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:background="@color/orange"
+            android:textSize="14dp"
+            android:padding="10dp"
+            android:layout_margin="0dp"
+            />
+        <Button
+            android:id="@+id/logout"
+            style="@style/sign_up"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="Logout"
+            android:textSize="14dp"
+            android:layout_margin="0dp"
+            />
+    </LinearLayout>
+</LinearLayout>
