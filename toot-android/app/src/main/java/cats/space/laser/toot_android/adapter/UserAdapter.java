@@ -150,7 +150,7 @@ public class UserAdapter extends ArrayAdapter<User> {
         public void onClick(View view) {
             User user = SharedPreferencesUtil.getUser();
             try {
-                tootService.sendTootHereAsync(user.get_id(), id, context, new TootResponseListener());
+                    tootService.sendTootHereAsync(user.get_id(), id, context, new TootResponseListener());
             } catch (ApiException e) {
                 e.printStackTrace();
             }

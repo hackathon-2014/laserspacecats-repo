@@ -51,6 +51,7 @@ public class ApiHelper {
     public static final String GET_USER = "/user";
     public static final String CREATE_USER = "/user";
     public static final String UPDATE_USER = "/user";
+
     public static final String TOOT = "/message/toot";
     public static final String TOOT_BEER = "/message/beer";
 
@@ -300,12 +301,6 @@ public class ApiHelper {
 
         HttpParams httpParams = new BasicHttpParams();
 
-        if (extraHeaderParams!=null) {
-            for (String param:extraHeaderParams.keySet()) {
-                httpParams.setParameter(param, extraHeaderParams.get(httpParams));
-            }
-        }
-
         HttpClient httpClient = new DefaultHttpClient(httpParams);
         HttpEntityEnclosingRequestBase httpRequest;
         if(requestType.equalsIgnoreCase("POST")) {
@@ -368,11 +363,6 @@ public class ApiHelper {
         HttpConnectionParams.setConnectionTimeout(httpParams, timeout);
         HttpConnectionParams.setSoTimeout(httpParams, timeout);
 
-        if (extraHeaderParams!=null) {
-            for (String param:extraHeaderParams.keySet()) {
-                httpParams.setParameter(param, extraHeaderParams.get(httpParams));
-            }
-        }
 
         // Create HttpClient
         HttpClient httpClient = new DefaultHttpClient(httpParams);
@@ -452,7 +442,11 @@ public class ApiHelper {
     private static void setHttpRequestHeader(HttpRequestBase httpRequest, Date timestamp,
                                              Map<String, String> extraHeaders) {
         httpRequest.setHeader("X-Stream-Timestamp", timestamp.getTime() / 1000 + "");
-
+        if (extraHeaders!=null) {
+            for (String extraHeaderKey:extraHeaders.keySet()) {
+                httpRequest.setHeader(extraHeaderKey, extraHeaders.get(extraHeaderKey));
+            }
+        }
     }
 
     private static void setHttpRequestEntity(HttpEntityEnclosingRequestBase httpRequest, File file) {
