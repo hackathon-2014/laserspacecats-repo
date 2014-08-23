@@ -21,7 +21,6 @@ import cats.space.laser.toot_android.api.UserService;
 import cats.space.laser.toot_android.listener.AsyncTaskCompleteListener;
 import cats.space.laser.toot_android.model.ApiBase;
 import cats.space.laser.toot_android.model.User;
-import cats.space.laser.toot_android.model.UsersList;
 import cats.space.laser.toot_android.util.ApiResponseUtil;
 import cats.space.laser.toot_android.util.SharedPreferencesUtil;
 
@@ -55,7 +54,7 @@ public class MainActivity extends Activity {
         add.setOnClickListener(new AddOnClickListener());
 
         try {
-            userService.getFriendsAsynchronous(user, context, new GetUsersListener());
+            userService.getFriendsAsynchronous(user, context, new GetFriendsListener());
         } catch (ApiException e) {
             e.printStackTrace();
         }
@@ -105,24 +104,19 @@ public class MainActivity extends Activity {
         }
     }
 
-    private class GetUsersListener implements AsyncTaskCompleteListener<ApiBase> {
+    private class GetFriendsListener implements AsyncTaskCompleteListener<User[]> {
 
         @Override
-        public void onTaskComplete(ApiBase result) {
+        public void onTaskComplete(User[] result) {
 
             if (result!=null) {
                 // get friends
-                UsersList users;
-                try {
-                    users = (UsersList) ApiResponseUtil.parseResponse(result, UsersList.class);
-                } catch (ApiException e) {
-                    return;
-                }
+                User[] users = result;
 
                 // populate adapter and attached it to the list view
-                userAdapter = new UserAdapter(context, R.layout.user_row, Arrays.asList(users.getUsers()));
+                userAdapter = new UserAdapter(context, R.layout.user_row, Arrays.asList(users));
 
-                if (users.getUsers().length != 0) {
+                if (users.length != 0) {
                     userListView.setAdapter(userAdapter);
                 }
             }

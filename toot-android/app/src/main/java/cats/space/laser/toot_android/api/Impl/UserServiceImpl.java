@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserService {
         //try to make call
         String url = ApiHelper.GET_USER+"/"+user.getUsername()+"/friends";
         try {
-            ApiHelper.get(url, context, UsersList.class, listener, null);
+            ApiHelper.get(url, context, User[].class, listener, null);
         } catch (Exception e) {
             throw new ApiException(EXCEPTION_MESSAGE, null);
         }
