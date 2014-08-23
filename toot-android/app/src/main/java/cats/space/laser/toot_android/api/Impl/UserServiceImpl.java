@@ -7,7 +7,6 @@ import cats.space.laser.toot_android.api.ApiHelper;
 import cats.space.laser.toot_android.api.UserService;
 import cats.space.laser.toot_android.listener.AsyncTaskCompleteListener;
 import cats.space.laser.toot_android.model.User;
-import cats.space.laser.toot_android.model.UserResponse;
 import cats.space.laser.toot_android.model.UsersList;
 import cats.space.laser.toot_android.util.GsonUtil;
 
@@ -39,7 +38,7 @@ public class UserServiceImpl implements UserService {
             throws ApiException {
 
         //try to make call
-        String url = ApiHelper.GET_USER;
+        String url = ApiHelper.GET_USERS;
         try {
             ApiHelper.get(url, context, UsersList.class, listener, null);
         } catch (Exception e) {

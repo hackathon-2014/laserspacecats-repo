@@ -47,6 +47,7 @@ public class ApiHelper {
 
     // API URL
     private static int timeout = 10000;
+    public static final String GET_USERS = "/users";
     public static final String GET_USER = "/user";
     public static final String CREATE_USER = "/user";
     public static final String UPDATE_USER = "/user";
