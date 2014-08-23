@@ -80,7 +80,7 @@ public class LoginActivity extends Activity {
     public class LoginOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            if (username.getText().equals("") || password.getText().equals("")) {
+            if (username.getText().toString().equals("") || password.getText().toString().equals("")) {
                 Toast.makeText(context,R.string.invalid_username,Toast.LENGTH_SHORT).show();
             } else {
                 startLogin();

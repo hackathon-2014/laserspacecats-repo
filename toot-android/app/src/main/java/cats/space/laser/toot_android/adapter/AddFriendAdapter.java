@@ -2,6 +2,7 @@ package cats.space.laser.toot_android.adapter;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,28 +11,32 @@ import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import cats.space.laser.toot_android.R;
 import cats.space.laser.toot_android.api.ApiException;
 import cats.space.laser.toot_android.api.Impl.TootServiceImpl;
+import cats.space.laser.toot_android.api.Impl.UserServiceImpl;
 import cats.space.laser.toot_android.api.TootService;
+import cats.space.laser.toot_android.api.UserService;
 import cats.space.laser.toot_android.listener.AsyncTaskCompleteListener;
 import cats.space.laser.toot_android.model.ApiBase;
 import cats.space.laser.toot_android.model.User;
 import cats.space.laser.toot_android.util.ApiResponseUtil;
 import cats.space.laser.toot_android.util.DialogUtil;
+import cats.space.laser.toot_android.util.SharedPreferencesUtil;
 
 /**
  * Created by Whitney Champion on 8/23/14.
  */
 public class AddFriendAdapter extends ArrayAdapter<User> {
 
-    private TootService tootService = new TootServiceImpl();
+    private UserService userService = new UserServiceImpl();
     int resource;
     Context context;
     List<User> data;
-    String[] urls;
 
     public AddFriendAdapter(Context context, int resource, List<User> items) {
         super(context, resource, items);
@@ -47,6 +52,7 @@ public class AddFriendAdapter extends ArrayAdapter<User> {
         View row = convertView;
 
         User user = data.get(position);
+        Typeface type = Typeface.createFromAsset(context.getAssets(), "century_gothic.TTF");
 
         if ( row == null )
         {
@@ -72,7 +78,8 @@ public class AddFriendAdapter extends ArrayAdapter<User> {
         }
 
         holder.username.setText(user.getUsername());
-        holder.username.setOnClickListener(new UsernameOnClickListener(user.getUsername(), holder.dialog));
+        holder.username.setTypeface(type);
+        holder.username.setOnClickListener(new UsernameOnClickListener(user.get_id(), holder.dialog));
 
         return row;
     }
@@ -84,44 +91,51 @@ public class AddFriendAdapter extends ArrayAdapter<User> {
 
     public class UsernameOnClickListener implements View.OnClickListener {
 
-        String username;
+        String id;
         ProgressDialog dialog;
 
-        public UsernameOnClickListener(String username, ProgressDialog dialog) {
+        public UsernameOnClickListener(String id, ProgressDialog dialog) {
             this.dialog = dialog;
-            this.username = username;
+            this.id = id;
         }
 
         @Override
         public void onClick(View view) {
-//            User user = SharedPreferencesUtil.getUser();
-//            try {
-////                tootService.sendTootHereAsync(user.get_id(), id, context, new TootResponseListener());
-//            } catch (ApiException e) {
-//                e.printStackTrace();
-//            }
+            User user = SharedPreferencesUtil.getUser();
+
+            List<String> friends = new ArrayList<String>();
+            friends.add(id);
+
+            String[] newFriends = new String[friends.size()];
+            friends.toArray(newFriends);
+
+            user.setFriends(newFriends);
+
+            try {
+                userService.addFriendsAsynchronous(user, context, new AddFriendsResponseListener(dialog));
+            } catch (ApiException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    private class AddUserResponseListener implements AsyncTaskCompleteListener<ApiBase> {
+    private class AddFriendsResponseListener implements AsyncTaskCompleteListener<ApiBase> {
 
         ProgressDialog dialog;
 
-        public AddUserResponseListener(ProgressDialog dialog) {
+        public AddFriendsResponseListener(ProgressDialog dialog) {
             this.dialog = dialog;
         }
 
         @Override
         public void onTaskComplete(ApiBase result) {
             dialog.hide();
-            ApiBase response;
+            User response;
             try {
-                response = (ApiBase) ApiResponseUtil.parseResponse(result, ApiBase.class);
+                response = (User) ApiResponseUtil.parseResponse(result, User.class);
             } catch (ApiException e) {
                 return;
             }
-
-            Log.i("Cat", "toot success, smells bad");
         }
     }
 }
