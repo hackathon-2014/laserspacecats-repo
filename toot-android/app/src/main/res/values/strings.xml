@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="invalid_username">Please enter a username and password</string>
+    <string name="invalid_username">Please enter a username and password.</string>
+    <string name="invalid_login">Login failed - please check your username and password.</string>
     <string name="add_success">User added</string>
     <string name="app_name">toot</string>
 </resources>

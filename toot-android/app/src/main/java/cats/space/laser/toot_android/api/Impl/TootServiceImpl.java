@@ -55,10 +55,10 @@ public class TootServiceImpl implements TootService {
         Map<String, String> headers = new HashMap<String, String>();
         headers.put("id", toId);
         headers.put("origin", fromId);
-        headers.put("classification", "arrival");
-        String url = ApiHelper.TOOT_BEER;
+        headers.put("classification", "beer");
+        String url = ApiHelper.TOOT;
         try {
-            ApiHelper.post(url, "", context, ApiBase.class, listener, null);
+            ApiHelper.post(url, "", context, ApiBase.class, listener, headers);
         } catch (Exception e) {
             throw new ApiException(EXCEPTION_MESSAGE, null);
         }

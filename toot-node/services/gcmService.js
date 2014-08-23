@@ -16,7 +16,7 @@ gcmService.sendMessage = function sendMessage(regId, toot, callback) {
         message.addData('message','Bring Beer!!');
     }
     message.addData('title','Toot');
-    message.addData('msgcnt','1');
+    message.addData('msgcnt','10');
     message.collapseKey = 'demo';
     message.delayWhileIdle = true;
     message.timeToLive = 3;
@@ -30,6 +30,9 @@ gcmService.sendMessage = function sendMessage(regId, toot, callback) {
     sender.send(message, registrationIds, 4, function (result) {
         if(result === 401) {
             callback("ERROR", null);
+            console.log("toot error");
+        } else {
+            console.log("toot sent");
         }
     });
     /** Use the following line if you want to send the message without retries

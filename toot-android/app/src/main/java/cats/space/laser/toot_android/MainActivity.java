@@ -21,7 +21,6 @@ import cats.space.laser.toot_android.api.UserService;
 import cats.space.laser.toot_android.listener.AsyncTaskCompleteListener;
 import cats.space.laser.toot_android.model.ApiBase;
 import cats.space.laser.toot_android.model.User;
-import cats.space.laser.toot_android.model.UsersList;
 import cats.space.laser.toot_android.util.ApiResponseUtil;
 import cats.space.laser.toot_android.util.SharedPreferencesUtil;
 
@@ -33,7 +32,9 @@ public class MainActivity extends Activity {
     private Context context;
     private UserAdapter userAdapter;
     private ListView userListView;
+    private UserService userService;
     private ImageButton addButton;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +45,8 @@ public class MainActivity extends Activity {
         addButton = (ImageButton) findViewById(R.id.add);
         addButton.setOnClickListener(new AddFriendOnClickListener());
 
-        User user = SharedPreferencesUtil.getUser();
-        UserService userService = new UserServiceImpl();
+        user = SharedPreferencesUtil.getUser();
+        userService = new UserServiceImpl();
         userListView = (ListView) findViewById(R.id.users);
 
         ImageButton settings = (ImageButton) findViewById(R.id.settings);
@@ -54,11 +55,7 @@ public class MainActivity extends Activity {
         ImageButton add = (ImageButton) findViewById(R.id.add);
         add.setOnClickListener(new AddOnClickListener());
 
-        try {
-            userService.getUsersAsynchronous(user, context, new GetUsersListener());
-        } catch (ApiException e) {
-            e.printStackTrace();
-        }
+
     }
 
     class AddOnClickListener implements View.OnClickListener {
@@ -88,6 +85,7 @@ public class MainActivity extends Activity {
                     switch(which){
                         case 0:
                             // log out
+                            SharedPreferencesUtil.clearSharedPrefs();
                             SharedPreferencesUtil.setLoggedIn(false);
                             Intent intent = new Intent(context,LoginActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -104,24 +102,21 @@ public class MainActivity extends Activity {
         }
     }
 
-    private class GetUsersListener implements AsyncTaskCompleteListener<ApiBase> {
+    private class GetFriendsListener implements AsyncTaskCompleteListener<User[]> {
 
         @Override
-        public void onTaskComplete(ApiBase result) {
+        public void onTaskComplete(User[] result) {
 
-            // get users
-            UsersList users;
-            try {
-                users = (UsersList) ApiResponseUtil.parseResponse(result, UsersList.class);
-            } catch (ApiException e) {
-                return;
-            }
+            if (result!=null) {
+                // get friends
+                User[] users = result;
 
-            // populate adapter and attached it to the list view
-            userAdapter = new UserAdapter(context, R.layout.user_row, Arrays.asList(users.getUsers()));
+                // populate adapter and attached it to the list view
+                userAdapter = new UserAdapter(context, R.layout.user_row, Arrays.asList(users));
 
-            if (users.getUsers().length!=0) {
-                userListView.setAdapter(userAdapter);
+                if (users.length != 0) {
+                    userListView.setAdapter(userAdapter);
+                }
             }
 
         }
@@ -135,6 +130,16 @@ public class MainActivity extends Activity {
             Intent intent = new Intent(context, AddFriendsActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        try {
+            userService.getFriendsAsynchronous(user, context, new GetFriendsListener());
+        } catch (ApiException e) {
+            e.printStackTrace();
         }
     }
 }

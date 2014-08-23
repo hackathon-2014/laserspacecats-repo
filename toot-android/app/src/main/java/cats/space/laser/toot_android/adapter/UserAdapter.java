@@ -59,8 +59,6 @@ public class UserAdapter extends ArrayAdapter<User> {
             holder = new UserHolder();
             holder.username = (TextView) row.findViewById(R.id.username);
 
-            holder.dialog = DialogUtil.getProgressDialog(context,"Sending toot...");
-
             holder.toot = (FrameLayout) row.findViewById(R.id.button_horn);
             holder.omw = (FrameLayout) row.findViewById(R.id.button_car);
             holder.beer = (FrameLayout) row.findViewById(R.id.button_beer);
@@ -81,6 +79,8 @@ public class UserAdapter extends ArrayAdapter<User> {
             holder = (UserHolder)row.getTag();
         }
 
+        holder.dialog = DialogUtil.getProgressDialog(context,"Sending toot...");
+
         holder.username.setText(user.getUsername());
         holder.username.setTypeface(type);
         holder.username.setOnClickListener(new UsernameOnClickListener(user.getUsername(), holder.dialog));
@@ -89,8 +89,8 @@ public class UserAdapter extends ArrayAdapter<User> {
         holder.omw.setOnClickListener(new OmwOnClickListener(user.get_id(), holder.dialog));
         holder.beer.setOnClickListener(new BeerOnClickListener(user.get_id(), holder.dialog));
 
-        holder.omwButton.setOnClickListener(new TootOnClickListener(user.get_id(), holder.dialog));
-        holder.tootButton.setOnClickListener(new OmwOnClickListener(user.get_id(), holder.dialog));
+        holder.omwButton.setOnClickListener(new OmwOnClickListener(user.get_id(), holder.dialog));
+        holder.tootButton.setOnClickListener(new TootOnClickListener(user.get_id(), holder.dialog));
         holder.beerButton.setOnClickListener(new BeerOnClickListener(user.get_id(), holder.dialog));
 
         return row;
@@ -183,7 +183,7 @@ public class UserAdapter extends ArrayAdapter<User> {
             dialog.show();
             User user = SharedPreferencesUtil.getUser();
             try {
-                tootService.sendTootHereAsync(user.get_id(), id, context, new TootResponseListener(dialog));
+                tootService.sendTootOTWAsync(user.get_id(), id, context, new TootResponseListener(dialog));
             } catch (ApiException e) {
                 e.printStackTrace();
             }
