@@ -4,7 +4,15 @@ android {
     compileSdkVersion 20
     buildToolsVersion "20.0.0"
 
-    defaultConfig {
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
+
+    defaultConfig{
         applicationId "cats.space.laser.toot_android"
         minSdkVersion 19
         targetSdkVersion 20
