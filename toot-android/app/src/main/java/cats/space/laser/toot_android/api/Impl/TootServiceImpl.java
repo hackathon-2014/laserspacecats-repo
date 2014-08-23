@@ -19,10 +19,10 @@ public class TootServiceImpl implements TootService {
     private static final String EXCEPTION_MESSAGE = "An error occurred.";
 
     @Override
-    public void sendTootOTWAsync(String fromId, String toUserName, Context context, AsyncTaskCompleteListener listener) throws ApiException {
+    public void sendTootOTWAsync(String fromId, String id, Context context, AsyncTaskCompleteListener listener) throws ApiException {
 
         Map<String, String> headers = new HashMap<String, String>();
-        headers.put("userName", toUserName);
+        headers.put("id", id);
         headers.put("origin", fromId);
         headers.put("classification", "otw");
 
@@ -36,9 +36,9 @@ public class TootServiceImpl implements TootService {
     }
 
     @Override
-    public void sendTootHereAsync(String fromId, String toUserName, Context context, AsyncTaskCompleteListener listener) throws ApiException {
+    public void sendTootHereAsync(String fromId, String id, Context context, AsyncTaskCompleteListener listener) throws ApiException {
         Map<String, String> headers = new HashMap<String, String>();
-        headers.put("userName", toUserName);
+        headers.put("id", id);
         headers.put("origin", fromId);
         headers.put("classification", "arrival");
 
@@ -52,15 +52,13 @@ public class TootServiceImpl implements TootService {
 
     @Override
     public void sendTootBeerAsync(String fromId, String toId, Context context, AsyncTaskCompleteListener listener) throws ApiException {
-        TootRequest tootRequest = new TootRequest();
-        tootRequest.setDestination(toId);
-        tootRequest.setOrigin(fromId);
-
-        String tootJson = GsonUtil.toJson(tootRequest);
-
+        Map<String, String> headers = new HashMap<String, String>();
+        headers.put("id", toId);
+        headers.put("origin", fromId);
+        headers.put("classification", "arrival");
         String url = ApiHelper.TOOT_BEER;
         try {
-            ApiHelper.post(url, tootJson, context, ApiBase.class, listener, null);
+            ApiHelper.post(url, "", context, ApiBase.class, listener, null);
         } catch (Exception e) {
             throw new ApiException(EXCEPTION_MESSAGE, null);
         }
