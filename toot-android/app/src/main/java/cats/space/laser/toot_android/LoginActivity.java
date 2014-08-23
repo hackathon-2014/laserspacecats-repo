@@ -20,6 +20,7 @@ import cats.space.laser.toot_android.api.UserService;
 import cats.space.laser.toot_android.listener.AsyncTaskCompleteListener;
 import cats.space.laser.toot_android.model.ApiBase;
 import cats.space.laser.toot_android.model.User;
+import cats.space.laser.toot_android.util.ApiResponseUtil;
 import cats.space.laser.toot_android.util.SharedPreferencesUtil;
 import cats.space.laser.toot_android.util.Util;
 
@@ -38,9 +39,15 @@ public class LoginActivity extends Activity {
         setContentView(R.layout.activity_login);
 
         context = getApplicationContext();
-
         Button signIn = (Button) findViewById(R.id.sign_in);
         signIn.setOnClickListener(new LoginOnClickListener());
+
+        // if user already saved, go to main screen
+        if (SharedPreferencesUtil.isLoggedIn()) {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
 
         // Check device for Play Services APK. If check succeeds, proceed with
         //  GCM registration.
@@ -100,18 +107,12 @@ public class LoginActivity extends Activity {
 
         UserService userService = new UserServiceImpl();
 
-        // if user already saved, go to main screen
-        if (SharedPreferencesUtil.isLoggedIn()) {
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-        } else {
-            // log in
-            try {
-                userService.createUserAsynchronous(getUserFromScreen(), context, new LoginResponseListener());
-            } catch (ApiException e) {
-                e.printStackTrace();
-            }
+
+        // log in
+        try {
+            userService.createUserAsynchronous(getUserFromScreen(), context, new LoginResponseListener());
+        } catch (ApiException e) {
+            e.printStackTrace();
         }
 
     }
@@ -133,8 +134,18 @@ public class LoginActivity extends Activity {
         @Override
         public void onTaskComplete(ApiBase result) {
 
-            SharedPreferencesUtil.setLoggedIn(true);
-
+            User response;
+            try {
+                response = (User) ApiResponseUtil.parseResponse(result, User.class);
+                if (response!=null) {
+                    SharedPreferencesUtil.setLoggedIn(true);
+                    SharedPreferencesUtil.saveUser(response);
+                    Intent intent = new Intent(context,MainActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
+            } catch (ApiException e) { //something bad happened
+            }
         }
     }
 
