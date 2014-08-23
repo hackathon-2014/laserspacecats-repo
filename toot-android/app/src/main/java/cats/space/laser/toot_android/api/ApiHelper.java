@@ -49,8 +49,6 @@ public class ApiHelper {
     // API URL
     private static int timeout = 10000;
 
-    private static TokenService tokenService = new TokenServiceImpl();
-
     public static void get(String url, Context context, Type type,
                            AsyncTaskCompleteListener<Object> callback, Map<String, String> headers) {
         new ApiRequestAsyncTask(context, type, callback, headers).execute(url, "GET");
@@ -476,18 +474,6 @@ public class ApiHelper {
     private static String retryRequest(HttpRequestBase request, HttpClient client,
                                              Context context) throws IOException {
 
-        //this is where we refresh and retry attempt
-        OAuthTokenResponse refreshedToken = null;
-        try {
-            refreshedToken = tokenService.refreshToken(context);
-        } catch (ApiException e) {
-
-        }
-        if (refreshedToken!=null) {
-            request.setHeader("Authorization", "Bearer " + refreshedToken.getAccessToken());
-            HttpResponse response = client.execute(request);
-            return parseHttpResponse(response);
-        }
         return "";
     }
 
