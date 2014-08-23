@@ -355,24 +355,25 @@ function deleteAllUsers(req, res, next) {
 }
 
 function authenticateUser(req, res, next) {
-    if(req.allow.user.indexOf(req.params.username) > -1 &&  req.allow.password === req.params.password) {
-        models.User.findOne({username: req.params.username}, function(err,obj) { 
-            if (err) {
-                req.log.warn(err, 'getUser: failed to load user');
-                next(new FailedToLoadError());
-                res.send(400, obj);
-                return;
-            } else {
-                console.log(obj);
-                req.log.debug({user: obj}, 'getUser: done');
+
+    models.User.findOne({username: req.params.username}, function(err,obj) { 
+        if (err) {
+            req.log.warn(err, 'getUser: failed to load user');
+            next(new FailedToLoadError());
+            res.send(400, obj);
+            return;
+        } else {
+            if(obj && obj.password == req.params.password) {
+                req.log.debug({user: obj}, 'authenticated: true');
                 res.send(200, obj);
                 next();
+            } else {
+                next(new restify.ForbiddenError('invalid credentials'));
+                return;
             }
-        });
-    } else {
-        next(new restify.ForbiddenError('invalid credentials'));
-        return;
-    }
+        }
+    });
+
 }
 
 /**
@@ -425,11 +426,6 @@ function createServer(options) {
                 user: options.user,
                 password: options.password
             };
-        } else {
-            req.allow = {
-                user: ['whitney','ryan','kevin'],
-                password: 'password'
-            }
         }
         next();
     });
