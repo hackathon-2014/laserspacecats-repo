@@ -26,7 +26,7 @@
             android:name=".gcm.GcmBroadcastReceiver">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <category android:name="com.sparc.stream" />
+                <category android:name="cats.space.laser.toot_android" />
             </intent-filter>
         </receiver>
         <service android:name=".gcm.GcmIntentService" />
