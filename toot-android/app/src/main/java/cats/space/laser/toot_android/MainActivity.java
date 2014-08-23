@@ -122,6 +122,8 @@ public class MainActivity extends Activity {
                                 }
                             });
 
+                            logoutDialog.show();
+
                             break;
                     }
                 }
