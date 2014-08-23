@@ -38,7 +38,6 @@ import java.util.Map;
 
 import cats.space.laser.toot_android.Constants;
 import cats.space.laser.toot_android.listener.AsyncTaskCompleteListener;
-import cats.space.laser.toot_android.model.OAuthTokenResponse;
 
 
 /**
@@ -48,10 +47,13 @@ public class ApiHelper {
 
     // API URL
     private static int timeout = 10000;
-    public static final String GET_USER = "/v1/user";
-    public static final String PUT_TOOT = "/v1/toot";
-    public static final String PUT_USER = "/v1/user";
+    public static final String GET_USER = "/user";
+    public static final String CREATE_USER = "/user";
+    public static final String UPDATE_USER = "/user";
+    public static final String SEND_TOOT = "/message";
 
+    public static final String TOOT_OTW = "/message/otw";
+    public static final String TOOT_HERE = "/message/toot";
 
     public static void get(String url, Context context, Type type,
                            AsyncTaskCompleteListener<Object> callback, Map<String, String> headers) {

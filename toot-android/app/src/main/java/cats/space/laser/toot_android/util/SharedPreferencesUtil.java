@@ -39,16 +39,32 @@ public class SharedPreferencesUtil {
         sharedPreferencesEditor.commit();
     }
 
-    public static User getUser() {
-        String username = sharedPreferences.getString("username",null);
-        String id = sharedPreferences.getString("userId",null);
-        String password = sharedPreferences.getString("password",null);
+    public static void setLoggedIn(boolean loggedIn) {
+        SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
+        sharedPreferencesEditor.putBoolean("loggedIn",loggedIn);
+        sharedPreferencesEditor.commit();
+    }
 
-        User user = new User();
-        user.setUsername(username);
-        user.setId(id);
-        user.setPassword(password);
-        return user;
+    public static Boolean isLoggedIn() {
+        Boolean loggedIn = sharedPreferences.getBoolean("loggedIn",false);
+        return loggedIn;
+    }
+
+    public static User getUser() {
+        if (SharedPreferencesUtil.isLoggedIn()) {
+            String username = sharedPreferences.getString("username", null);
+            String id = sharedPreferences.getString("userId", null);
+            String password = sharedPreferences.getString("password", null);
+
+            User user = new User();
+            user.setUsername(username);
+            user.setId(id);
+            user.setPassword(password);
+            return user;
+
+        } else {
+            return null;
+        }
     }
 
 }
