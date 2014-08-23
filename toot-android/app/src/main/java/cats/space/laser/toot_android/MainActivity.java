@@ -4,11 +4,14 @@ package cats.space.laser.toot_android;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
@@ -22,6 +25,7 @@ import cats.space.laser.toot_android.listener.AsyncTaskCompleteListener;
 import cats.space.laser.toot_android.model.ApiBase;
 import cats.space.laser.toot_android.model.User;
 import cats.space.laser.toot_android.util.ApiResponseUtil;
+import cats.space.laser.toot_android.util.DialogUtil;
 import cats.space.laser.toot_android.util.SharedPreferencesUtil;
 
 /**
@@ -35,6 +39,7 @@ public class MainActivity extends Activity {
     private UserService userService;
     private ImageButton addButton;
     private User user;
+    private ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +60,7 @@ public class MainActivity extends Activity {
         ImageButton add = (ImageButton) findViewById(R.id.add);
         add.setOnClickListener(new AddOnClickListener());
 
+        dialog = DialogUtil.getProgressDialog(context,"Loading friends...");
 
     }
 
@@ -84,12 +90,40 @@ public class MainActivity extends Activity {
                     dialog.dismiss();
                     switch(which){
                         case 0:
-                            // log out
-                            SharedPreferencesUtil.clearSharedPrefs();
-                            SharedPreferencesUtil.setLoggedIn(false);
-                            Intent intent = new Intent(context,LoginActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
+
+                            LayoutInflater inflater =
+                                    (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                            View view = inflater.inflate(R.layout.dialog_logout, null);
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+                            AlertDialog logoutDialog = builder.create();
+
+                            logoutDialog.setView(view, 0, 0, 0, 0);
+
+                            Button cancelButton = (Button) view.findViewById(R.id.cancel);
+                            final Dialog finalDialog = logoutDialog;
+                            cancelButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    finalDialog.dismiss();
+                                }
+                            });
+                            Button logoutButton = (Button) view.findViewById(R.id.logout);
+                            logoutButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    // log out
+                                    SharedPreferencesUtil.clearSharedPrefs();
+                                    SharedPreferencesUtil.setLoggedIn(false);
+                                    Intent intent = new Intent(context,LoginActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
+                                }
+                            });
+
+                            logoutDialog.show();
+
                             break;
                     }
                 }
@@ -117,6 +151,8 @@ public class MainActivity extends Activity {
                 if (users.length != 0) {
                     userListView.setAdapter(userAdapter);
                 }
+
+                dialog.hide();
             }
 
         }
@@ -136,6 +172,7 @@ public class MainActivity extends Activity {
     @Override
     public void onResume() {
         super.onResume();
+        dialog.show();
         try {
             userService.getFriendsAsynchronous(user, context, new GetFriendsListener());
         } catch (ApiException e) {
