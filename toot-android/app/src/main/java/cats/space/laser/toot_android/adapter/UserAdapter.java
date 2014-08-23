@@ -34,7 +34,6 @@ public class UserAdapter extends ArrayAdapter<User> {
     int resource;
     Context context;
     List<User> data;
-    String[] urls;
 
     public UserAdapter(Context context, int resource, List<User> items) {
         super(context, resource, items);

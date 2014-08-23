@@ -17,6 +17,9 @@ public interface UserService {
     void createUserAsynchronous(User user, Context context, AsyncTaskCompleteListener listener)
             throws ApiException;
 
+    void addFriendsAsynchronous(User user, Context context, AsyncTaskCompleteListener listener)
+            throws ApiException;
+
     void getUsersAsynchronous(User user, Context context, AsyncTaskCompleteListener listener)
             throws ApiException;
 }

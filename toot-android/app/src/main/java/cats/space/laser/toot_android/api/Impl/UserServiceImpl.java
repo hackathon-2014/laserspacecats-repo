@@ -45,4 +45,20 @@ public class UserServiceImpl implements UserService {
             throw new ApiException(EXCEPTION_MESSAGE, null);
         }
     }
+
+    @Override
+    public void addFriendsAsynchronous(User user, Context context, AsyncTaskCompleteListener listener)
+            throws ApiException {
+
+        //first, transform User to json
+        String userJson = GsonUtil.toJson(user);
+
+        //try to make call
+        String url = ApiHelper.UPDATE_USER;
+        try {
+            ApiHelper.post(url, userJson, context, UsersList.class, listener, null);
+        } catch (Exception e) {
+            throw new ApiException(EXCEPTION_MESSAGE, null);
+        }
+    }
 }
