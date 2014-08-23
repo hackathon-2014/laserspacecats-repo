@@ -17,6 +17,7 @@ import cats.space.laser.toot_android.R;
 public class GcmIntentService extends IntentService {
     public static final int NOTIFICATION_ID = 1;
     private NotificationManager mNotificationManager;
+    Context context;
 
     public GcmIntentService() {
         super("GcmIntentService");
@@ -24,6 +25,8 @@ public class GcmIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+
+        context = this;
         Bundle extras = intent.getExtras();
         GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
         String messageType = gcm.getMessageType(intent);
@@ -71,6 +74,7 @@ public class GcmIntentService extends IntentService {
 
             // submit the notification
             mBuilder.setContentIntent(pendingIntent);
+            mBuilder.setSound(Uri.parse("android.resource://" + context.getPackageName() + "/"+R.raw.sport_air_horn_reverb));
             mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
 
         } else { // open the browser
