@@ -1,7 +1,9 @@
 
 var fs = require('fs');
 var path = require('path');
+
 var util = require('util');
+var gcm = require('./services/gcmService.js');
 var mongoose = require('mongoose');
 
 var restify = require('restify');
@@ -170,6 +172,11 @@ function deleteAll(req, res, next) {
     });
 }
 
+function testGCM() {
+    gcm.sendMessage();
+}
+
+
 
 /**
  * Loads a TODO by name
@@ -319,6 +326,8 @@ function createServer(options) {
     server.put('/user', updateUser);
     server.del('/user/:name', deleteUser);
 
+    server.get('/testGCM', testGCM);
+
 
     // Register a default '/' handler
 
@@ -328,8 +337,9 @@ function createServer(options) {
             'POST    /message/toot',
             'GET     /user',
             'PUT     /user',
-            'POST    /user'
-            'POST    /login'
+            'POST    /user',
+            'POST    /login',
+            'GET    /testGCM'
         ];
         res.send(200, routes);
         next();

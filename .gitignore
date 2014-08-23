@@ -5,3 +5,4 @@
 /build
 *.iml
 /toot-android/.idea
+/toot-node/.idea
