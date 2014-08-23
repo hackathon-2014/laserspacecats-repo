@@ -5,6 +5,7 @@ var gcmService = require('./services/gcmService');
 var mongoose = require('mongoose');
 var restify = require('restify');
 var models = require('./models');
+var _ = require('underscore');
 
 
 ///--- Errors
@@ -184,11 +185,39 @@ function getUser(req, res, next) {
         if (err) {
             req.log.warn(err, 'getUser: failed to load user');
             next(new FailedToLoadError());
-            res.send(400, toot);
+            res.send(400, obj);
             return;
         } else {
             req.log.debug({user: obj}, 'getUser: done');
             res.send(200, obj);
+            next();
+        }
+    });
+}
+
+function getFriends(req, res, next) {
+    models.User.findOne({username: req.params.name}, function(err,obj) { 
+        if (err) {
+            req.log.warn(err, 'getUser: failed to load user');
+            next(new FailedToLoadError());
+            res.send(400, obj);
+            return;
+        } else {
+            var friends = [];
+            _.each(obj.friends, function(friend) {
+                models.User.findOne({_id: friend}, function(err,obj) { 
+                    if (err) {
+                        req.log.warn(err, 'getFriend: failed to load friend');
+                        next(new FailedToLoadError());
+                        res.send(400, obj);
+                        return;
+                    } else {
+                        friends.push(obj);
+                        req.log.debug({friend: obj}, 'getFriend: done');
+                    }
+                });
+            });
+            res.send(200, friends);
             next();
         }
     });
@@ -228,17 +257,16 @@ function updateUser(req, res, next) {
         if (err) {
             req.log.warn(err, 'getUser: failed to load user');
             next(new FailedToLoadError());
-            res.send(400, toot);
+            res.send(400, obj);
             return;
         } else {
-            obj.username = req.params.username;
             obj.password = req.params.password;
             obj.registrationId = req.params.registrationId;
             obj.friends = req.params.friends;
             obj.save(function (err, fluffy) {
                 if (err) {
                     req.log.warn('updateUser: failed to save');
-                    res.send(400, user);
+                    res.send(400, obj);
                     next(new FailedToSaveError());
                     return;
                 } else {
@@ -247,6 +275,21 @@ function updateUser(req, res, next) {
                     next();
                 }
             }); 
+        }
+    });
+}
+
+function getAllUsers(req, res, next) {
+    models.User.find({}, function(err,obj) { 
+        if (err) {
+            req.log.warn(err, 'getUser: failed to load users');
+            next(new FailedToLoadError());
+            res.send(400, obj);
+            return;
+        } else {
+            req.log.debug({user: obj}, 'getUsers: done');
+            res.send(200, obj);
+            next();
         }
     });
 }
@@ -334,6 +377,8 @@ function createServer(options) {
     server.put('/user', updateUser);
     server.del('/user/:name', deleteUser);
     server.del('/user/removeAll', deleteAllUsers);
+    server.get('/users', getAllUsers);
+    server.get('/user/:name/friends', getFriends);
 
     server.get('/testGCM', testGCM);
 
@@ -342,12 +387,13 @@ function createServer(options) {
     server.get('/', function root(req, res, next) {
         var routes = [
             'POST    /message/toot',
-            'GET     /user',
+            'GET     /user/:name',
             'GET     /testGCM',
             'PUT     /user',
             'POST    /user',
-            'GET     /user/removeAll',
-            'POST    /login'
+            'GET     /users',
+            'POST    /login',
+            'GET     /user/:name/friends'
         ];
         res.send(200, routes);
         next();
