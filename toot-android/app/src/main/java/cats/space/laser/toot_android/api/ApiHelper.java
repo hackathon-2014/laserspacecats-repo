@@ -50,7 +50,6 @@ public class ApiHelper {
     public static final String GET_USER = "/user";
     public static final String CREATE_USER = "/user";
     public static final String UPDATE_USER = "/user";
-    public static final String SEND_TOOT = "/message";
 
     public static final String TOOT_OTW = "/message/otw";
     public static final String TOOT_HERE = "/message/toot";
