@@ -1,5 +1,4 @@
 
-var fs = require('fs');
 var path = require('path');
 var util = require('util');
 var gcmService = require('./services/gcmService');
@@ -184,7 +183,6 @@ function sendOTW(req, res, next) {
 }
 
 function getUser(req, res, next) {
-    req.log.warn(req.params);
     models.User.findOne({username: req.params.name}, function(err,obj) { 
         if (err) {
             req.log.warn(err, 'getUser: failed to load user');
