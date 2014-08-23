@@ -180,7 +180,7 @@ function sendToot(req, res, next) {
 }
 
 function getUser(req, res, next) {
-    models.User.findOne({username: req.headers.name}, function(err,obj) { 
+    models.User.findOne({_id: req.headers.id}, function(err,obj) { 
         if (err) {
             req.log.warn(err, 'getUser: failed to load user');
             next(new FailedToLoadError());
