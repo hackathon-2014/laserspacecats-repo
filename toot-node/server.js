@@ -4,12 +4,35 @@ var path = require('path');
 var util = require('util');
 var gcmService = require('./services/gcmService');
 var mongoose = require('mongoose');
+var restify = require('restify');
 
 var models = require('./models');
-var restify = require('restify');
 
 
 ///--- Errors
+function FailedToSaveError(thing) {
+    restify.RestError.call(this, {
+        statusCode: 409,
+        restCode: 'FailedToSave',
+        message: 'failed to save '+ thing,
+        constructorOpt: FailedToSaveError
+    });
+
+    this.name = 'FailedToSaveError';
+}
+util.inherits(FailedToSaveError, restify.RestError);
+
+function FailedToLoadError() {
+    restify.RestError.call(this, {
+        statusCode: 409,
+        restCode: 'FailedToLoad',
+        message: 'failed to load user',
+        constructorOpt: FailedToLoadError
+    });
+    this.name = 'FailedToLoadError';
+}
+util.inherits(FailedToLoadError, restify.RestError);
+
 function MissingDestinationError() {
     restify.RestError.call(this, {
         statusCode: 409,
@@ -21,6 +44,18 @@ function MissingDestinationError() {
     this.name = 'MissingDestinationError';
 }
 util.inherits(MissingDestinationError, restify.RestError);
+
+function MissingUserNameError() {
+    restify.RestError.call(this, {
+        statusCode: 409,
+        restCode: 'MissingUserName',
+        message: 'you need a username',
+        constructorOpt: MissingUserNameError
+    });
+
+    this.name = 'MissingUserNameError';
+}
+util.inherits(MissingUserNameError, restify.RestError);
 
 
 ///--- Formatters
@@ -104,12 +139,12 @@ function authenticate(req, res, next) {
  */
 function sendToot(req, res, next) {
     if (!req.params.destination) {
-        req.log.warn({params: p}, 'createToot: missing destination');
-        next(new MissingDestination());
+        req.log.warn('Missing Destination');
+        next(new MissingDestinationError());
         return;
     }
 
-    var toot = new Toot(
+    var toot = new models.Toot(
         { 
             origin: req.params.origin,
             destination: req.params.destination,
@@ -119,7 +154,13 @@ function sendToot(req, res, next) {
     );
 
     toot.save(function (err, fluffy) {
-        if (err) return console.error(err);
+        if (err) {
+            return console.error(err);
+        } else {
+            req.log.debug({toot: toot}, 'createToot: done');
+            res.send(201, toot);
+            next();
+        }
     }); 
 }
 
@@ -145,11 +186,47 @@ function sendOTW(req, res, next) {
 }
 
 function getUser(req, res, next) {
-
+    req.log.warn(req.params);
+    models.User.findOne({username: req.params.name}, function(err,obj) { 
+        if (err) {
+            req.log.warn(err, 'getUser: failed to load user');
+            next(new FailedToLoadError());
+            return;
+        } else {
+            req.log.debug({user: obj}, 'getUser: done');
+            res.send(201, obj);
+            next();
+        }
+    });
 }
 
 function createUser(req, res, next) {
-    
+    if (!req.params.username) {
+        req.log.warn('createUser: missing name');
+        next(new MissingUserNameError());
+        return;
+    }
+
+    var user = new models.User(
+        { 
+            username: req.params.username,
+            password: req.params.password,
+            registrationId: req.params.registrationId,
+            friends: []
+        }
+    );
+
+    user.save(function (err, fluffy) {
+        if (err) {
+            req.log.warn('createUser: failed to save');
+            next(new FailedToSaveError());
+            return;
+        } else {
+            req.log.debug({user: user}, 'createUser: done');
+            res.send(201, user);
+            next();
+        }
+    }); 
 }
 
 function updateUser(req, res, next) {
@@ -158,6 +235,13 @@ function updateUser(req, res, next) {
 
 function deleteUser(req, res, next) {
     
+}
+
+function deleteAllUsers(req, res, next) {
+    models.User.remove({}, function (err) {
+        if (err) return handleError(err);
+        // removed!
+    });
 }
 
 function login(req, res, next) {
@@ -233,6 +317,7 @@ function createServer(options) {
     server.post('/user', createUser);
     server.put('/user', updateUser);
     server.del('/user/:name', deleteUser);
+    server.del('/user/removeAll', deleteAllUsers);
 
     server.get('/testGCM', testGCM);
 
@@ -246,6 +331,7 @@ function createServer(options) {
             'GET     /testGCM',
             'PUT     /user',
             'POST    /user',
+            'GET     /user/removeAll',
             'POST    /login'
         ];
         res.send(200, routes);

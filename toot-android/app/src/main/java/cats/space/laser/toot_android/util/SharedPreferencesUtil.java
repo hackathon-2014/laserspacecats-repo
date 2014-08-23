@@ -2,7 +2,6 @@ package cats.space.laser.toot_android.util;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-
 import cats.space.laser.toot_android.application.TootApplication;
 import cats.space.laser.toot_android.model.User;
 

@@ -15,4 +15,21 @@ var tootSchema = new mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model('Toot', tootSchema);
+var userSchema = new mongoose.Schema({
+  username: { type: String, default:'' },
+  password: { type: String, default:'password' },
+  registrationId: { 
+    type: Number, 
+    default: 0
+  },
+  friends: { 
+    type: [Number],
+    default: []
+  }
+});
+
+
+module.exports = {
+    Toot: mongoose.model('Toot', tootSchema),
+    User: mongoose.model('User', userSchema)
+};

@@ -1,14 +1,9 @@
 package cats.space.laser.toot_android;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.Arrays;
 
