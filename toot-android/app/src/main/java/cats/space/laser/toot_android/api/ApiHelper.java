@@ -36,26 +36,17 @@ import java.net.SocketTimeoutException;
 import java.util.Date;
 import java.util.Map;
 
+import cats.space.laser.toot_android.api.Impl.TokenServiceImpl;
+import cats.space.laser.toot_android.listener.AsyncTaskCompleteListener;
+import cats.space.laser.toot_android.model.OAuthTokenResponse;
+
 
 /**
- * Created by Whitney Champion on 4/18/14.
+ * Created by Whitney Champion on 8/23/14.
  */
 public class ApiHelper {
 
     // API URL
-    public static final String GET_STREAM = "/v1/stream";
-    public static final String GET_STREAMS = "/v1/stream";
-    public static final String GET_USER = "/v1/user";
-    public static final String SOCIAL = "/v1/user/social";
-    public static final String GET_LIKES = "/v1/like";
-    public static final String PUT_LIKE = "/v1/stream/like";
-    public static final String GET_USERS = "/v1/user";
-    public static final String ADD_SOCIAL = "/v1/user/socialprovider/add";
-    public static final String REMOVE_SOCIAL = "/v1/user/socialprovider/remove";
-    public static final String AUTH = "/v1/oauth/token";
-    public static final String LOGOUT = "/v1/oauth/logout";
-    public static final String REPORT = "/v1/report";
-    public static final String PUT_VIEWCT = "/v1/viewer/stream";
     private static int timeout = 10000;
 
     private static TokenService tokenService = new TokenServiceImpl();
@@ -435,7 +426,7 @@ public class ApiHelper {
     }
 
     private static String getAbsoluteUrl(String relativeUrl) {
-        return Constants.STREAM_API_URL + relativeUrl;
+        return relativeUrl;
     }
 
     private static void setHttpRequestHeader(HttpRequestBase httpRequest, Date timestamp,
