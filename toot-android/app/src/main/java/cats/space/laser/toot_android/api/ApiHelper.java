@@ -48,6 +48,10 @@ public class ApiHelper {
 
     // API URL
     private static int timeout = 10000;
+    public static final String GET_USER = "/v1/user";
+    public static final String PUT_TOOT = "/v1/toot";
+    public static final String PUT_USER = "/v1/user";
+
 
     public static void get(String url, Context context, Type type,
                            AsyncTaskCompleteListener<Object> callback, Map<String, String> headers) {
