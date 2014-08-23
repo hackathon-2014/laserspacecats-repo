@@ -255,7 +255,7 @@ function createUser(req, res, next) {
 }
 
 function updateUser(req, res, next) {
-    models.User.findOne({username: req.params.username}, function(err,obj) { 
+    models.User.findOne({_id: req.params.id}, function(err,obj) { 
         if (err) {
             req.log.warn(err, 'getUser: failed to load user');
             next(new FailedToLoadError());
