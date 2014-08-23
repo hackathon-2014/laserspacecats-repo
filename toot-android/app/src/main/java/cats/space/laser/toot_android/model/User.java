@@ -62,4 +62,5 @@ public class User extends ApiBase {
     public void setPassword(String password) {
         this.password = password;
     }
+
 }
