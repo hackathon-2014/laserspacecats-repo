@@ -204,6 +204,7 @@ function getFriends(req, res, next) {
             return;
         } else {
             var friends = [];
+
             _.each(obj.friends, function(friend) {
                 models.User.findOne({_id: friend}, function(err,obj) { 
                     if (err) {
@@ -288,7 +289,10 @@ function getAllUsers(req, res, next) {
             return;
         } else {
             req.log.debug({user: obj}, 'getUsers: done');
-            res.send(200, obj);
+            var users = {
+                users: obj
+            }
+            res.send(200, users);
             next();
         }
     });

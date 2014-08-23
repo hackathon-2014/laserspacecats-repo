@@ -23,7 +23,7 @@ var userSchema = new mongoose.Schema({
     default: 0
   },
   friends: { 
-    type: [Number],
+    type: [String],
     default: []
   }
 });
