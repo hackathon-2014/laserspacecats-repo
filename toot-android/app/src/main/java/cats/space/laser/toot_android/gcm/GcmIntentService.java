@@ -51,7 +51,7 @@ public class GcmIntentService extends IntentService {
         if (url==null) {
 
             // build a correct, finalized url
-            String finalizedUrl = Constants.WATCH_BASE_URL+"/"+message.split(" ")[0];
+            String finalizedUrl = Constants.API_URL+"/"+message.split(" ")[0];
 
             // build the pending activity
             Intent actionIntent = new Intent(Intent.ACTION_VIEW);
@@ -76,7 +76,7 @@ public class GcmIntentService extends IntentService {
         } else { // open the browser
 
             // build a correct, finalized url
-            String finalizedUrl = String.format("%s%s", Constants.WATCH_BASE_URL, url);
+            String finalizedUrl = String.format("%s%s", Constants.API_URL, url);
 
             // build the pending activity
             Intent actionIntent = new Intent(Intent.ACTION_VIEW);

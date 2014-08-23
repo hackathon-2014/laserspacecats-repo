@@ -22,7 +22,10 @@ gcmService.sendMessage = function sendMessage(regId, callback) {
      * Parameters: message-literal, registrationIds-array, No. of retries, callback-function
      */
     sender.send(message, registrationIds, 4, function (result) {
-        callback("ERROR", null);
+        if(result === 401) {
+            callback("ERROR", null);
+        }
+        
         console.log(result);
     });
     /** Use the following line if you want to send the message without retries

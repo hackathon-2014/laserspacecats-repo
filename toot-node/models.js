@@ -19,7 +19,7 @@ var userSchema = new mongoose.Schema({
   username: { type: String, default:'' },
   password: { type: String, default:'password' },
   registrationId: { 
-    type: Number, 
+    type: String, 
     default: 0
   },
   friends: { 
