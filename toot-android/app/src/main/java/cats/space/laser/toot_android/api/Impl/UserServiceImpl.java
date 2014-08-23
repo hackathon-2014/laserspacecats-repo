@@ -26,9 +26,9 @@ public class UserServiceImpl implements UserService {
         String userJson = GsonUtil.toJson(user);
 
         //try to make call
-        String url = ApiHelper.GET_USER;
+        String url = ApiHelper.CREATE_USER;
         try {
-            ApiHelper.put(url, userJson, context, UserResponse.class, null);
+            ApiHelper.post(url, userJson, context, UserResponse.class, null);
         } catch (Exception e) {
             throw new ApiException(EXCEPTION_MESSAGE, null);
         }
