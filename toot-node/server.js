@@ -68,71 +68,6 @@ function MissingUserNameError() {
 }
 util.inherits(MissingUserNameError, restify.RestError);
 
-
-///--- Formatters
-
-/**
- * This is a nonsensical custom content-type 'application/todo', just to
- * demonstrate how to support additional content-types.  Really this is
- * the same as text/plain, where we pick out 'task' if available
- */
-function formatToot(req, res, body) {
-    if (body instanceof Error) {
-        res.statusCode = body.statusCode || 500;
-        body = body.message;
-    } else if (typeof (body) === 'object') {
-        body = body.task || JSON.stringify(body);
-    } else {
-        body = body.toString();
-    }
-
-    res.setHeader('Content-Length', Buffer.byteLength(body));
-    return (body);
-}
-
-
-
-function testGCM() {
-    gcmService.sendMessage("", function callback(err, data) {
-
-    });
-}
-
-
-///--- Handlers
-
-/**
- * Only checks for HTTP Basic Authenticaion
- *
- * Some handler before is expected to set the accepted user/pass combo
- * on req as:
- *
- * req.allow = { user: '', pass: '' };
- *
- * Or this will be skipped.
- */
-function authenticate(req, res, next) {
-    if (!req.allow) {
-        req.log.debug('skipping authentication');
-        next();
-        return;
-    }
-
-    var authz = req.authorization.basic;
-    if (!authz) {
-        res.setHeader('WWW-Authenticate', 'Basic realm="tootapp"');
-        next(new restify.UnauthorizedError('authentication required'));
-        return;
-    }
-    console.log(req.allow.pass);
-    if (req.allow.user.indexOf(authz.username) === -1 || authz.password !== req.allow.password) {
-        next(new restify.ForbiddenError('invalid credentials'));
-        return;
-    }
-    next();
-}
-
-
 ///--- API
 function sendToot(req, res, next) {
     if (!req.headers.id) {
@@ -444,20 +379,6 @@ function createServer(options) {
     server.use(restify.gzipResponse());
     server.use(restify.bodyParser());
 
-    // Now our own handlers for authentication/authorization
-    // Here we only use basic auth, but really you should look
-    // at https://github.com/joyent/node-http-signature
-    server.use(function setup(req, res, next) {
-        if (options.user && options.password) {
-            req.allow = {
-                user: options.user,
-                password: options.password
-            };
-        }
-        next();
-    });
-    server.use(authenticate);
-
     /// Now the real handlers. Here we just CRUD on TODO blobs
     server.post('/message/toot', sendToot);
     server.get('/user/:name', getUser);
@@ -471,8 +392,6 @@ function createServer(options) {
     server.post('/user/addFriends', addFriends);
     server.post('/user/authenticate', authenticateUser);
     server.post('/user/removeFriend', removeFriend);
-
-    server.get('/testGCM', testGCM);
 
     // Register a default '/' handler
 
