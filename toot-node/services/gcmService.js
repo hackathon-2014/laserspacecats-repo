@@ -16,7 +16,7 @@ gcmService.sendMessage = function sendMessage() {
     message.timeToLive = 3;
 
     // At least one token is required - each app will register a different token
-    registrationIds.push('APA91bFobAwN7P3Okxy2al8RI12VcJFUS-giXWTOoWXIObtSPOE1h7FuH1VPLBPgshDI_Fp7aIYVET-ssvGUErlWYA0cKPGhoXT1daqyDsEfem9ZtgZNRhQFv7kLCIVSigYlpMluToPiSHSsFSEdtCDfKoOZqNPgfs');
+    registrationIds.push('');
 
     /**
      * Parameters: message-literal, registrationIds-array, No. of retries, callback-function
