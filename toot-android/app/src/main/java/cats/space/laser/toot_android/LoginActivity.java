@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
@@ -79,7 +80,11 @@ public class LoginActivity extends Activity {
     public class LoginOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            startLogin();
+            if (username.getText().equals("") || password.getText().equals("")) {
+                Toast.makeText(context,R.string.invalid_username,Toast.LENGTH_SHORT).show();
+            } else {
+                startLogin();
+            }
         }
     }
 
