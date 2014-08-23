@@ -1,6 +1,7 @@
 package cats.space.laser.toot_android.adapter;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,6 +47,7 @@ public class UserAdapter extends ArrayAdapter<User> {
         View row = convertView;
 
         User user = data.get(position);
+        Typeface type = Typeface.createFromAsset(context.getAssets(),"century_gothic.TTF");
 
         if ( row == null )
         {
@@ -68,6 +70,7 @@ public class UserAdapter extends ArrayAdapter<User> {
         }
 
         holder.username.setText(user.getUsername());
+        holder.username.setTypeface(type);
         holder.username.setOnClickListener(new UsernameOnClickListener(user.getUsername()));
         holder.toot.setOnClickListener(new TootOnClickListener(user.get_id()));
         holder.omw.setOnClickListener(new OmwOnClickListener(user.get_id()));

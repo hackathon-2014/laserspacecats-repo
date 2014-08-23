@@ -36,12 +36,13 @@
                 android:background="@android:color/transparent"
                 android:src="@drawable/icon_settings"/>
             <ImageButton
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
                 android:layout_alignParentRight="true"
                 android:id="@+id/add"
                 android:padding="20dp"
                 android:scaleType="fitCenter"
+                android:layout_centerVertical="true"
                 android:background="@android:color/transparent"
                 android:src="@drawable/icon_add"/>
         </RelativeLayout>
