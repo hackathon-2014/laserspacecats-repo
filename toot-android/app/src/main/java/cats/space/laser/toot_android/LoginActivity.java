@@ -140,7 +140,7 @@ public class LoginActivity extends Activity {
 
     private void startLogin() {
 
-        dialog = DialogUtil.getProgressDialog(context,"Logging in...");
+        dialog = DialogUtil.getProgressDialog(LoginActivity.this,"Logging in...");
         dialog.show();
 
         UserService userService = new UserServiceImpl();
@@ -156,7 +156,7 @@ public class LoginActivity extends Activity {
 
     private void startSignUp() {
 
-        dialog = DialogUtil.getProgressDialog(context,"Creating your user...");
+        dialog = DialogUtil.getProgressDialog(LoginActivity.this,"Creating your user...");
         dialog.show();
         UserService userService = new UserServiceImpl();
 

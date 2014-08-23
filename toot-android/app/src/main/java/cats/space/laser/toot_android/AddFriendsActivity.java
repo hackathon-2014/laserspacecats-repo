@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.Arrays;
 
@@ -68,6 +70,10 @@ public class AddFriendsActivity extends Activity {
 
             if (users.getUsers().length!=0) {
                 userListView.setAdapter(userAdapter);
+            } else {
+                userListView.setVisibility(View.GONE);
+                TextView empty = (TextView) findViewById(R.id.empty);
+                empty.setVisibility(View.VISIBLE);
             }
         }
 

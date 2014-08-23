@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.Arrays;
 
@@ -150,6 +151,10 @@ public class MainActivity extends Activity {
 
                 if (users.length != 0) {
                     userListView.setAdapter(userAdapter);
+                } else {
+                    userListView.setVisibility(View.GONE);
+                    TextView empty = (TextView) findViewById(R.id.empty);
+                    empty.setVisibility(View.VISIBLE);
                 }
 
                 dialog.hide();
