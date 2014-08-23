@@ -124,13 +124,14 @@ public class LoginActivity extends Activity {
 
         UserService userService = new UserServiceImpl();
 
-
-        // log in
+        // check if user exists
         try {
-            userService.createUserAsynchronous(getUserFromScreen(), context, new LoginResponseListener());
+            userService.checkUserAsynchronous(getUserFromScreen(), context, new UserAvailableResponseListener());
         } catch (ApiException e) {
             e.printStackTrace();
         }
+
+
 
     }
 
@@ -158,6 +159,35 @@ public class LoginActivity extends Activity {
                     Intent intent = new Intent(context,MainActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
+                }
+            } catch (ApiException e) { //something bad happened
+            }
+        }
+    }
+
+    private class UserAvailableResponseListener implements AsyncTaskCompleteListener<ApiBase> {
+
+        @Override
+        public void onTaskComplete(ApiBase result) {
+
+            UserService userService = new UserServiceImpl();
+            Boolean response;
+            try {
+                response = (Boolean) ApiResponseUtil.parseResponse(result, Boolean.class);
+                if (response==false) { // user exists
+                    // create user
+                    try {
+                        userService.createUserAsynchronous(getUserFromScreen(), context, new LoginResponseListener());
+                    } catch (ApiException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    // login
+                    try {
+                        userService.loginAsynchronous(getUserFromScreen(), context, new LoginResponseListener());
+                    } catch (ApiException e) {
+                        e.printStackTrace();
+                    }
                 }
             } catch (ApiException e) { //something bad happened
             }

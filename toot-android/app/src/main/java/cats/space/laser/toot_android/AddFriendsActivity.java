@@ -58,7 +58,7 @@ public class AddFriendsActivity extends Activity {
             }
 
             // populate adapter and attached it to the list view
-            userAdapter = new AddFriendAdapter(context, R.layout.user_row, Arrays.asList(users.getUsers()));
+            userAdapter = new AddFriendAdapter(context, R.layout.add_user_row, Arrays.asList(users.getUsers()));
 
             if (users.getUsers().length!=0) {
                 userListView.setAdapter(userAdapter);

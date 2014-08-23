@@ -3,25 +3,23 @@ package cats.space.laser.toot_android.adapter;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Typeface;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import cats.space.laser.toot_android.R;
 import cats.space.laser.toot_android.api.ApiException;
-import cats.space.laser.toot_android.api.Impl.TootServiceImpl;
 import cats.space.laser.toot_android.api.Impl.UserServiceImpl;
-import cats.space.laser.toot_android.api.TootService;
 import cats.space.laser.toot_android.api.UserService;
 import cats.space.laser.toot_android.listener.AsyncTaskCompleteListener;
+import cats.space.laser.toot_android.model.AddFriend;
 import cats.space.laser.toot_android.model.ApiBase;
 import cats.space.laser.toot_android.model.User;
 import cats.space.laser.toot_android.util.ApiResponseUtil;
@@ -101,7 +99,8 @@ public class AddFriendAdapter extends ArrayAdapter<User> {
 
         @Override
         public void onClick(View view) {
-            User user = SharedPreferencesUtil.getUser();
+
+            AddFriend user = new AddFriend();
 
             List<String> friends = new ArrayList<String>();
             friends.add(id);
@@ -110,7 +109,9 @@ public class AddFriendAdapter extends ArrayAdapter<User> {
             friends.toArray(newFriends);
 
             user.setFriends(newFriends);
+            user.setId(SharedPreferencesUtil.getUser().get_id());
 
+            dialog.show();
             try {
                 userService.addFriendsAsynchronous(user, context, new AddFriendsResponseListener(dialog));
             } catch (ApiException e) {
@@ -133,6 +134,9 @@ public class AddFriendAdapter extends ArrayAdapter<User> {
             User response;
             try {
                 response = (User) ApiResponseUtil.parseResponse(result, User.class);
+                if (response!=null) {
+                    Toast.makeText(context,R.string.add_success,Toast.LENGTH_SHORT).show();
+                }
             } catch (ApiException e) {
                 return;
             }

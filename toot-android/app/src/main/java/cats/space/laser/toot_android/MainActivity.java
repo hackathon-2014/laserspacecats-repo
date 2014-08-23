@@ -109,7 +109,7 @@ public class MainActivity extends Activity {
         @Override
         public void onTaskComplete(ApiBase result) {
 
-            // get subscriptions
+            // get users
             UsersList users;
             try {
                 users = (UsersList) ApiResponseUtil.parseResponse(result, UsersList.class);

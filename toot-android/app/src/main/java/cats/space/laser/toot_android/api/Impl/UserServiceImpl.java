@@ -6,6 +6,7 @@ import cats.space.laser.toot_android.api.ApiException;
 import cats.space.laser.toot_android.api.ApiHelper;
 import cats.space.laser.toot_android.api.UserService;
 import cats.space.laser.toot_android.listener.AsyncTaskCompleteListener;
+import cats.space.laser.toot_android.model.AddFriend;
 import cats.space.laser.toot_android.model.User;
 import cats.space.laser.toot_android.model.UsersList;
 import cats.space.laser.toot_android.util.GsonUtil;
@@ -34,6 +35,48 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void loginAsynchronous(User user, Context context, AsyncTaskCompleteListener listener)
+            throws ApiException {
+
+        //first, transform User to json
+        String userJson = GsonUtil.toJson(user);
+
+        //try to make call
+        String url = ApiHelper.LOGIN;
+        try {
+            ApiHelper.post(url, userJson, context, User.class, listener, null);
+        } catch (Exception e) {
+            throw new ApiException(EXCEPTION_MESSAGE, null);
+        }
+    }
+
+    @Override
+    public void checkUserAsynchronous(User user, Context context, AsyncTaskCompleteListener listener)
+            throws ApiException {
+
+        //try to make call
+        String url = ApiHelper.GET_USER+"/"+user.getUsername()+"/exists";
+        try {
+            ApiHelper.get(url, context, Boolean.class, listener, null);
+        } catch (Exception e) {
+            throw new ApiException(EXCEPTION_MESSAGE, null);
+        }
+    }
+
+    @Override
+    public void getFriendsAsynchronous(User user, Context context, AsyncTaskCompleteListener listener)
+            throws ApiException {
+
+        //try to make call
+        String url = ApiHelper.GET_USER+"/"+user.getUsername()+"/friends";
+        try {
+            ApiHelper.get(url, context, UsersList.class, listener, null);
+        } catch (Exception e) {
+            throw new ApiException(EXCEPTION_MESSAGE, null);
+        }
+    }
+
+    @Override
     public void getUsersAsynchronous(User user, Context context, AsyncTaskCompleteListener listener)
             throws ApiException {
 
@@ -47,16 +90,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void addFriendsAsynchronous(User user, Context context, AsyncTaskCompleteListener listener)
+    public void addFriendsAsynchronous(AddFriend user, Context context, AsyncTaskCompleteListener listener)
             throws ApiException {
 
         //first, transform User to json
         String userJson = GsonUtil.toJson(user);
 
         //try to make call
-        String url = ApiHelper.UPDATE_USER;
+        String url = ApiHelper.ADD_FRIENDS;
         try {
-            ApiHelper.post(url, userJson, context, UsersList.class, listener, null);
+            ApiHelper.post(url, userJson, context, User.class, listener, null);
         } catch (Exception e) {
             throw new ApiException(EXCEPTION_MESSAGE, null);
         }
