@@ -49,4 +49,20 @@ public class TootServiceImpl implements TootService {
             throw new ApiException(EXCEPTION_MESSAGE, null);
         }
     }
+
+    @Override
+    public void sendTootBeerAsync(String fromId, String toId, Context context, AsyncTaskCompleteListener listener) throws ApiException {
+        TootRequest tootRequest = new TootRequest();
+        tootRequest.setDestination(toId);
+        tootRequest.setOrigin(fromId);
+
+        String tootJson = GsonUtil.toJson(tootRequest);
+
+        String url = ApiHelper.TOOT_BEER;
+        try {
+            ApiHelper.post(url, tootJson, context, ApiBase.class, listener, null);
+        } catch (Exception e) {
+            throw new ApiException(EXCEPTION_MESSAGE, null);
+        }
+    }
 }

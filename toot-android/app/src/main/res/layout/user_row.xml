@@ -15,8 +15,9 @@ style="@style/user_row">
     <FrameLayout
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:background="@drawable/button_background"
+        android:background="@drawable/button_background_pink"
         android:layout_gravity="center"
+        android:padding="5dp"
         android:layout_alignParentRight="true"
         android:id="@+id/button_car">
         <ImageButton
@@ -25,17 +26,18 @@ style="@style/user_row">
             android:scaleType="fitCenter"
             android:layout_gravity="center"
             android:background="@android:color/transparent"
-            android:src="@drawable/icon_car"/>
+            android:src="@drawable/icon_car_white"/>
 
     </FrameLayout>
 
     <FrameLayout
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:background="@drawable/button_background"
+        android:background="@drawable/button_background_lime"
         android:layout_gravity="center"
         android:layout_toLeftOf="@id/button_car"
         android:layout_marginRight="20dp"
+        android:padding="5dp"
         android:id="@+id/button_horn">
         <ImageButton
             android:layout_width="wrap_content"
@@ -43,7 +45,25 @@ style="@style/user_row">
             android:scaleType="fitCenter"
             android:layout_gravity="center"
             android:background="@android:color/transparent"
-            android:src="@drawable/icon_horn"/>
+            android:src="@drawable/icon_horn_white"/>
+
+    </FrameLayout>
+    <FrameLayout
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/button_background_orange"
+        android:layout_gravity="center"
+        android:layout_toLeftOf="@id/button_horn"
+        android:layout_marginRight="20dp"
+        android:padding="9dp"
+        android:id="@+id/button_beer">
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="fitCenter"
+            android:layout_gravity="center"
+            android:background="@android:color/transparent"
+            android:src="@drawable/icon_beer"/>
 
     </FrameLayout>
 </RelativeLayout>

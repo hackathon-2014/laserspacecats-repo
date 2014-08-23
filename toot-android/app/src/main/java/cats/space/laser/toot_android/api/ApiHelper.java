@@ -51,8 +51,8 @@ public class ApiHelper {
     public static final String GET_USER = "/user";
     public static final String CREATE_USER = "/user";
     public static final String UPDATE_USER = "/user";
-
     public static final String TOOT = "/message/toot";
+    public static final String TOOT_BEER = "/message/beer";
 
     public static void get(String url, Context context, Type type,
                            AsyncTaskCompleteListener<Object> callback, Map<String, String> headers) {

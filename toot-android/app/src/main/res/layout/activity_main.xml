@@ -6,11 +6,6 @@
     android:layout_height="match_parent"
     style="@style/page">
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:id="@+id/logo"/>
-
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -18,7 +13,12 @@
         <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/users"/>
+        android:id="@+id/users"
+        android:scrollbars="vertical"
+        android:scrollbarThumbVertical="@drawable/scrollbar"
+        android:dividerHeight="6dp"
+        android:divider="@android:color/transparent"
+        android:layout_marginBottom="80dp"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -26,15 +26,6 @@
             android:orientation="horizontal"
             android:layout_gravity="bottom"
             android:background="@color/turquoise">
-            <ImageButton
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:id="@+id/beer"
-                android:padding="20dp"
-                android:scaleType="fitCenter"
-                android:layout_alignParentLeft="true"
-                android:background="@android:color/transparent"
-                android:src="@drawable/icon_beer"/>
             <ImageButton
                 android:layout_width="80dp"
                 android:layout_height="80dp"

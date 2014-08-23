@@ -1,11 +1,21 @@
 package cats.space.laser.toot_android;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+<<<<<<< HEAD
+=======
+import android.content.DialogInterface;
+>>>>>>> d87bff9747032636cb224fa556fd0b7bafd61b45
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+<<<<<<< HEAD
+=======
+import android.widget.ImageView;
+>>>>>>> d87bff9747032636cb224fa556fd0b7bafd61b45
 import android.widget.ListView;
 
 import java.util.Arrays;
@@ -44,12 +54,62 @@ public class MainActivity extends Activity {
         UserService userService = new UserServiceImpl();
         userListView = (ListView) findViewById(R.id.users);
 
+        ImageButton settings = (ImageButton) findViewById(R.id.settings);
+        settings.setOnClickListener(new SettingsOnClickListener());
+
+        ImageButton add = (ImageButton) findViewById(R.id.add);
+        add.setOnClickListener(new AddOnClickListener());
+
         try {
             userService.getUsersAsynchronous(user, context, new GetUsersListener());
         } catch (ApiException e) {
             e.printStackTrace();
         }
     }
+
+    class AddOnClickListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View view) {
+            Intent intent = new Intent(context,AddFriendsActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+
+    }
+
+    class SettingsOnClickListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View view) {
+            AlertDialog.Builder b = new AlertDialog.Builder(context);
+            b.setTitle("Settings");
+            String[] types = {"Logout"};
+            b.setItems(types, new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                    dialog.dismiss();
+                    switch(which){
+                        case 0:
+                            // log out
+                            SharedPreferencesUtil.setLoggedIn(false);
+                            Intent intent = new Intent(context,LoginActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                            break;
+                    }
+                }
+
+            });
+
+            Dialog dialog = b.create();
+            dialog.setCanceledOnTouchOutside(true);
+            dialog.show();
+        }
+    }
+
     private class GetUsersListener implements AsyncTaskCompleteListener<ApiBase> {
 
         @Override
