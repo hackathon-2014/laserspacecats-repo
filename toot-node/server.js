@@ -81,7 +81,9 @@ function formatToot(req, res, body) {
 
 
 function testGCM() {
-    gcmService.sendMessage();
+    gcmService.sendMessage("", function callback(err, data) {
+
+    });
 }
 
 
