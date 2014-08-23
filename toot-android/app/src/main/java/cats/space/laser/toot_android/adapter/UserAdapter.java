@@ -2,6 +2,7 @@ package cats.space.laser.toot_android.adapter;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,15 +12,22 @@ import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import cats.space.laser.toot_android.MainActivity;
 import cats.space.laser.toot_android.R;
 import cats.space.laser.toot_android.api.ApiException;
 import cats.space.laser.toot_android.api.Impl.TootServiceImpl;
+import cats.space.laser.toot_android.api.Impl.UserServiceImpl;
 import cats.space.laser.toot_android.api.TootService;
+import cats.space.laser.toot_android.api.UserService;
 import cats.space.laser.toot_android.listener.AsyncTaskCompleteListener;
+import cats.space.laser.toot_android.model.AddFriend;
 import cats.space.laser.toot_android.model.ApiBase;
+import cats.space.laser.toot_android.model.RemoveFriend;
 import cats.space.laser.toot_android.model.User;
 import cats.space.laser.toot_android.util.ApiResponseUtil;
 import cats.space.laser.toot_android.util.DialogUtil;
@@ -48,7 +56,7 @@ public class UserAdapter extends ArrayAdapter<User> {
         UserHolder holder = null;
         View row = convertView;
 
-        User user = data.get(position);
+        final User user = data.get(position);
         Typeface type = Typeface.createFromAsset(context.getAssets(),"century_gothic.TTF");
 
         if ( row == null )
@@ -58,8 +66,6 @@ public class UserAdapter extends ArrayAdapter<User> {
 
             holder = new UserHolder();
             holder.username = (TextView) row.findViewById(R.id.username);
-
-            holder.dialog = DialogUtil.getProgressDialog(context,"Sending toot...");
 
             holder.toot = (FrameLayout) row.findViewById(R.id.button_horn);
             holder.omw = (FrameLayout) row.findViewById(R.id.button_car);
@@ -81,6 +87,8 @@ public class UserAdapter extends ArrayAdapter<User> {
             holder = (UserHolder)row.getTag();
         }
 
+        holder.dialog = DialogUtil.getProgressDialog(context,"Sending toot...");
+
         holder.username.setText(user.getUsername());
         holder.username.setTypeface(type);
         holder.username.setOnClickListener(new UsernameOnClickListener(user.getUsername(), holder.dialog));
@@ -93,10 +101,34 @@ public class UserAdapter extends ArrayAdapter<User> {
         holder.tootButton.setOnClickListener(new TootOnClickListener(user.get_id(), holder.dialog));
         holder.beerButton.setOnClickListener(new BeerOnClickListener(user.get_id(), holder.dialog));
 
+        final UserHolder finalHolder = holder;
+        row.setOnLongClickListener(new View.OnLongClickListener(){
+            @Override
+            public boolean onLongClick(View v) {
+
+                RemoveFriend userToRemove = new RemoveFriend();
+                userToRemove.setFriend(user.get_id());
+                userToRemove.setId(SharedPreferencesUtil.getUser().get_id());
+
+                UserService userService = new UserServiceImpl();
+
+                ProgressDialog dialog = DialogUtil.getProgressDialog(context, "Removing user...");
+                dialog.show();
+                try {
+                    userService.removeFriendsAsynchronous(userToRemove, context, new RemoveFriendsResponseListener(dialog));
+                } catch (ApiException e) {
+                    e.printStackTrace();
+                }
+                return true;
+            }
+
+        });
+
         return row;
     }
 
     static class UserHolder {
+
         TextView username;
         FrameLayout toot;
         FrameLayout omw;
@@ -105,6 +137,32 @@ public class UserAdapter extends ArrayAdapter<User> {
         ImageButton omwButton;
         ImageButton tootButton;
         ProgressDialog dialog;
+    }
+
+    private class RemoveFriendsResponseListener implements AsyncTaskCompleteListener<ApiBase> {
+
+        ProgressDialog dialog;
+
+        public RemoveFriendsResponseListener(ProgressDialog dialog) {
+            this.dialog = dialog;
+        }
+
+        @Override
+        public void onTaskComplete(ApiBase result) {
+            dialog.hide();
+            User response;
+            try {
+                response = (User) ApiResponseUtil.parseResponse(result, User.class);
+                if (response!=null) {
+                    Toast.makeText(context,R.string.remove_success,Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(context, MainActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(intent);
+                }
+            } catch (ApiException e) {
+                return;
+            }
+        }
     }
 
     public class UsernameOnClickListener implements View.OnClickListener {

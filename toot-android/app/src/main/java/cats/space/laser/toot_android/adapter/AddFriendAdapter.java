@@ -67,13 +67,14 @@ public class AddFriendAdapter extends ArrayAdapter<User> {
 
             holder = new UserHolder();
             holder.username = (TextView) row.findViewById(R.id.username);
-            holder.dialog = DialogUtil.getProgressDialog(context, "Adding user...");
 
             row.setTag(holder);
 
         } else {
             holder = (UserHolder)row.getTag();
         }
+
+        holder.dialog = DialogUtil.getProgressDialog(context, "Adding user...");
 
         holder.username.setText(user.getUsername());
         holder.username.setTypeface(type);

@@ -32,7 +32,9 @@ public class MainActivity extends Activity {
     private Context context;
     private UserAdapter userAdapter;
     private ListView userListView;
+    private UserService userService;
     private ImageButton addButton;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +45,8 @@ public class MainActivity extends Activity {
         addButton = (ImageButton) findViewById(R.id.add);
         addButton.setOnClickListener(new AddFriendOnClickListener());
 
-        User user = SharedPreferencesUtil.getUser();
-        UserService userService = new UserServiceImpl();
+        user = SharedPreferencesUtil.getUser();
+        userService = new UserServiceImpl();
         userListView = (ListView) findViewById(R.id.users);
 
         ImageButton settings = (ImageButton) findViewById(R.id.settings);
@@ -53,11 +55,7 @@ public class MainActivity extends Activity {
         ImageButton add = (ImageButton) findViewById(R.id.add);
         add.setOnClickListener(new AddOnClickListener());
 
-        try {
-            userService.getFriendsAsynchronous(user, context, new GetFriendsListener());
-        } catch (ApiException e) {
-            e.printStackTrace();
-        }
+
     }
 
     class AddOnClickListener implements View.OnClickListener {
@@ -132,6 +130,16 @@ public class MainActivity extends Activity {
             Intent intent = new Intent(context, AddFriendsActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        try {
+            userService.getFriendsAsynchronous(user, context, new GetFriendsListener());
+        } catch (ApiException e) {
+            e.printStackTrace();
         }
     }
 }
