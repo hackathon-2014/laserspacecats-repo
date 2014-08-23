@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="100dp"
+style="@style/user_row">
+    <TextView
+        android:id="@+id/username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/add_username_row"
+        android:text="username"
+        android:layout_alignParentLeft="true"/>
+
+    <FrameLayout
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/button_background_pink"
+        android:layout_gravity="center"
+        android:padding="5dp"
+        android:layout_alignParentRight="true"
+        android:id="@+id/button_car">
+        <ImageButton
+            android:id="@+id/car_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="fitCenter"
+            android:layout_gravity="center"
+            android:background="@android:color/transparent"
+            android:src="@drawable/icon_car_white"/>
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/button_background_lime"
+        android:layout_gravity="center"
+        android:layout_toLeftOf="@id/button_car"
+        android:layout_marginRight="20dp"
+        android:padding="5dp"
+        android:id="@+id/button_horn">
+        <ImageButton
+            android:id="@+id/horn_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="fitCenter"
+            android:layout_gravity="center"
+            android:background="@android:color/transparent"
+            android:src="@drawable/icon_horn_white"/>
+
+    </FrameLayout>
+    <FrameLayout
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/button_background_orange"
+        android:layout_gravity="center"
+        android:layout_toLeftOf="@id/button_horn"
+        android:layout_marginRight="20dp"
+        android:padding="9dp"
+        android:id="@+id/button_beer">
+        <ImageButton
+            android:id="@+id/beer_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="fitCenter"
+            android:layout_gravity="center"
+            android:background="@android:color/transparent"
+            android:src="@drawable/icon_beer"/>
+
+    </FrameLayout>
+</RelativeLayout>

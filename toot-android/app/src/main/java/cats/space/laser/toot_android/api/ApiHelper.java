@@ -50,8 +50,9 @@ public class ApiHelper {
     public static final String GET_USERS = "/users";
     public static final String GET_USER = "/user";
     public static final String CREATE_USER = "/user";
+    public static final String LOGIN = "/login";
     public static final String UPDATE_USER = "/user";
-
+    public static final String ADD_FRIENDS = "/user/addFriends";
     public static final String TOOT = "/message/toot";
     public static final String TOOT_BEER = "/message/beer";
 
