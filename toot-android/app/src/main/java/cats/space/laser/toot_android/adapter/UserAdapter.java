@@ -89,8 +89,8 @@ public class UserAdapter extends ArrayAdapter<User> {
         holder.omw.setOnClickListener(new OmwOnClickListener(user.get_id(), holder.dialog));
         holder.beer.setOnClickListener(new BeerOnClickListener(user.get_id(), holder.dialog));
 
-        holder.omwButton.setOnClickListener(new TootOnClickListener(user.get_id(), holder.dialog));
-        holder.tootButton.setOnClickListener(new OmwOnClickListener(user.get_id(), holder.dialog));
+        holder.omwButton.setOnClickListener(new OmwOnClickListener(user.get_id(), holder.dialog));
+        holder.tootButton.setOnClickListener(new TootOnClickListener(user.get_id(), holder.dialog));
         holder.beerButton.setOnClickListener(new BeerOnClickListener(user.get_id(), holder.dialog));
 
         return row;
@@ -183,7 +183,7 @@ public class UserAdapter extends ArrayAdapter<User> {
             dialog.show();
             User user = SharedPreferencesUtil.getUser();
             try {
-                tootService.sendTootHereAsync(user.get_id(), id, context, new TootResponseListener(dialog));
+                tootService.sendTootOTWAsync(user.get_id(), id, context, new TootResponseListener(dialog));
             } catch (ApiException e) {
                 e.printStackTrace();
             }
