@@ -6,6 +6,7 @@ var mongoose = require('mongoose');
 var restify = require('restify');
 var models = require('./models');
 var async = require('async');
+var _ = require('underscore');
 
 
 ///--- Errors
@@ -262,6 +263,7 @@ function addFriends(req, res, next) {
             return;
         } else {
             obj.friends.push(req.params.friends);
+            obj.friends = _.uniq(obj.friends);
             obj.save(function (err, fluffy) {
                 if (err) {
                     req.log.warn('addFriends: failed to add friends');
@@ -292,7 +294,7 @@ function removeFriend(req, res, next) {
             }
             obj.save(function (err, fluffy) {
                 if (err) {
-                    req.log.warn('addFriends: failed to remove friend');
+                    req.log.warn('removeFriend: failed to remove friend');
                     res.send(400, obj);
                     next(new FailedToSaveError());
                     return;
