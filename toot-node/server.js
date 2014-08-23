@@ -343,6 +343,34 @@ function addFriends(req, res, next) {
     });
 }
 
+function removeFriend(req, res, next) {
+    models.User.findOne({_id: req.params.id}, function(err,obj) { 
+        if (err) {
+            req.log.warn(err, 'getUser: failed to load user');
+            next(new FailedToLoadError());
+            res.send(400, obj);
+            return;
+        } else {
+            var index = obj.friends.indexOf(req.params.friend);
+            if (index > -1) {
+                obj.friends.splice(index, 1);
+            }
+            obj.save(function (err, fluffy) {
+                if (err) {
+                    req.log.warn('addFriends: failed to remove friend');
+                    res.send(400, obj);
+                    next(new FailedToSaveError());
+                    return;
+                } else {
+                    req.log.debug({user: obj}, 'removeFriend: done');
+                    res.send(200, obj);
+                    next();
+                }
+            }); 
+        }
+    });
+}
+
 function deleteUser(req, res, next) {
     
 }
@@ -373,7 +401,6 @@ function authenticateUser(req, res, next) {
             }
         }
     });
-
 }
 
 /**
@@ -443,6 +470,7 @@ function createServer(options) {
     server.get('/user/:name/friends', getFriends);
     server.post('/user/addFriends', addFriends);
     server.post('/user/authenticate', authenticateUser);
+    server.post('/user/removeFriend', removeFriend);
 
     server.get('/testGCM', testGCM);
 
