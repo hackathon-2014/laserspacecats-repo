@@ -74,7 +74,7 @@ public class AddFriendAdapter extends ArrayAdapter<User> {
             holder = (UserHolder)row.getTag();
         }
 
-        holder.dialog = DialogUtil.getProgressDialog(context, "Adding user...");
+        holder.dialog = DialogUtil.getProgressDialog(context, "Adding friend...");
 
         holder.username.setText(user.getUsername());
         holder.username.setTypeface(type);

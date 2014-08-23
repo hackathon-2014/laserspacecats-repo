@@ -4,6 +4,7 @@ package cats.space.laser.toot_android;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -24,6 +25,7 @@ import cats.space.laser.toot_android.listener.AsyncTaskCompleteListener;
 import cats.space.laser.toot_android.model.ApiBase;
 import cats.space.laser.toot_android.model.User;
 import cats.space.laser.toot_android.util.ApiResponseUtil;
+import cats.space.laser.toot_android.util.DialogUtil;
 import cats.space.laser.toot_android.util.SharedPreferencesUtil;
 
 /**
@@ -37,6 +39,7 @@ public class MainActivity extends Activity {
     private UserService userService;
     private ImageButton addButton;
     private User user;
+    private ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +60,7 @@ public class MainActivity extends Activity {
         ImageButton add = (ImageButton) findViewById(R.id.add);
         add.setOnClickListener(new AddOnClickListener());
 
+        dialog = DialogUtil.getProgressDialog(context,"Loading friends...");
 
     }
 
@@ -145,6 +149,8 @@ public class MainActivity extends Activity {
                 if (users.length != 0) {
                     userListView.setAdapter(userAdapter);
                 }
+
+                dialog.hide();
             }
 
         }
@@ -164,6 +170,7 @@ public class MainActivity extends Activity {
     @Override
     public void onResume() {
         super.onResume();
+        dialog.show();
         try {
             userService.getFriendsAsynchronous(user, context, new GetFriendsListener());
         } catch (ApiException e) {

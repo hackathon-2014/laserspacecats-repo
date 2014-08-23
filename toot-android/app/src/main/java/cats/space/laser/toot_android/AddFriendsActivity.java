@@ -1,6 +1,7 @@
 package cats.space.laser.toot_android;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.widget.ListView;
@@ -16,6 +17,7 @@ import cats.space.laser.toot_android.model.ApiBase;
 import cats.space.laser.toot_android.model.User;
 import cats.space.laser.toot_android.model.UsersList;
 import cats.space.laser.toot_android.util.ApiResponseUtil;
+import cats.space.laser.toot_android.util.DialogUtil;
 import cats.space.laser.toot_android.util.SharedPreferencesUtil;
 
 /**
@@ -27,6 +29,7 @@ public class AddFriendsActivity extends Activity {
     private Context context;
     private AddFriendAdapter userAdapter;
     private ListView userListView;
+    private ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +41,8 @@ public class AddFriendsActivity extends Activity {
         UserService userService = new UserServiceImpl();
         userListView = (ListView) findViewById(R.id.users);
 
+        dialog = DialogUtil.getProgressDialog(context,"Getting users...");
+        dialog.show();
         try {
             userService.getUsersAsynchronous(user, context, new GetUsersListener());
         } catch (ApiException e) {
@@ -49,10 +54,11 @@ public class AddFriendsActivity extends Activity {
         @Override
         public void onTaskComplete(ApiBase result) {
 
-            // get subscriptions
+            // get friends
             UsersList users;
             try {
                 users = (UsersList) ApiResponseUtil.parseResponse(result, UsersList.class);
+                dialog.hide();
             } catch (ApiException e) {
                 return;
             }
