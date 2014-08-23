@@ -2,14 +2,25 @@ package cats.space.laser.toot_android;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import java.io.IOException;
 
+import cats.space.laser.toot_android.api.ApiException;
+import cats.space.laser.toot_android.api.Impl.UserServiceImpl;
+import cats.space.laser.toot_android.api.UserService;
+import cats.space.laser.toot_android.listener.AsyncTaskCompleteListener;
+import cats.space.laser.toot_android.model.ApiBase;
+import cats.space.laser.toot_android.model.User;
+import cats.space.laser.toot_android.util.SharedPreferencesUtil;
 import cats.space.laser.toot_android.util.Util;
 
 /**
@@ -28,6 +39,9 @@ public class LoginActivity extends Activity {
 
         context = getApplicationContext();
 
+        Button signIn = (Button) findViewById(R.id.sign_in);
+        signIn.setOnClickListener(new LoginOnClickListener());
+
         // Check device for Play Services APK. If check succeeds, proceed with
         //  GCM registration.
         if (Util.checkPlayServices(this)) {
@@ -36,12 +50,17 @@ public class LoginActivity extends Activity {
 
             if (regId.isEmpty()) {
                 registerInBackground();
-            } else {
-                startLogin();
             }
 
         } else {
             Log.i("Cat", "No valid Google Play Services APK found.");
+        }
+    }
+
+    public class LoginOnClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            startLogin();
         }
     }
 
@@ -78,6 +97,45 @@ public class LoginActivity extends Activity {
     }
 
     private void startLogin() {
+
+        UserService userService = new UserServiceImpl();
+
+        // if user already saved, go to main screen
+        if (SharedPreferencesUtil.isLoggedIn()) {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        } else {
+            // log in
+            try {
+                userService.createUserAsynchronous(getUserFromScreen(), context, new LoginResponseListener());
+            } catch (ApiException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    private User getUserFromScreen() {
+
+        EditText username = (EditText) findViewById(R.id.username);
+        EditText password = (EditText) findViewById(R.id.password);
+        User user = new User();
+        user.setUsername(username.getText().toString());
+        user.setRegistrationId(regId);
+        user.setPassword(password.getText().toString());
+
+        return user;
+    }
+
+    private class LoginResponseListener implements AsyncTaskCompleteListener<ApiBase> {
+
+        @Override
+        public void onTaskComplete(ApiBase result) {
+
+            SharedPreferencesUtil.setLoggedIn(true);
+
+        }
     }
 
 }
