@@ -51,8 +51,8 @@ public class AddFriendAdapter extends ArrayAdapter<User> {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             row = inflater.inflate(resource, parent, false);
 
-            FrameLayout hornlayout = (FrameLayout) convertView.findViewById(R.id.button_horn);
-            FrameLayout carlayout = (FrameLayout) convertView.findViewById(R.id.button_car);
+            FrameLayout hornlayout = (FrameLayout) row.findViewById(R.id.button_horn);
+            FrameLayout carlayout = (FrameLayout) row.findViewById(R.id.button_car);
 
             hornlayout.setVisibility(View.GONE);
             carlayout.setVisibility(View.GONE);

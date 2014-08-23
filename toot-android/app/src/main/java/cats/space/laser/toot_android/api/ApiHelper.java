@@ -52,8 +52,7 @@ public class ApiHelper {
     public static final String CREATE_USER = "/user";
     public static final String UPDATE_USER = "/user";
 
-    public static final String TOOT_OTW = "/message/otw";
-    public static final String TOOT_HERE = "/message/toot";
+    public static final String TOOT = "/message/toot";
 
     public static void get(String url, Context context, Type type,
                            AsyncTaskCompleteListener<Object> callback, Map<String, String> headers) {
@@ -298,7 +297,16 @@ public class ApiHelper {
                                   Context context, Map<String, String> extraHeaderParams) {
 
         // Create HttpClient
-        HttpClient httpClient = new DefaultHttpClient();
+
+        HttpParams httpParams = new BasicHttpParams();
+
+        if (extraHeaderParams!=null) {
+            for (String param:extraHeaderParams.keySet()) {
+                httpParams.setParameter(param, extraHeaderParams.get(httpParams));
+            }
+        }
+
+        HttpClient httpClient = new DefaultHttpClient(httpParams);
         HttpEntityEnclosingRequestBase httpRequest;
         if(requestType.equalsIgnoreCase("POST")) {
             httpRequest = new HttpPost(getAbsoluteUrl(url));
@@ -359,6 +367,12 @@ public class ApiHelper {
         HttpParams httpParams = new BasicHttpParams();
         HttpConnectionParams.setConnectionTimeout(httpParams, timeout);
         HttpConnectionParams.setSoTimeout(httpParams, timeout);
+
+        if (extraHeaderParams!=null) {
+            for (String param:extraHeaderParams.keySet()) {
+                httpParams.setParameter(param, extraHeaderParams.get(httpParams));
+            }
+        }
 
         // Create HttpClient
         HttpClient httpClient = new DefaultHttpClient(httpParams);
@@ -439,12 +453,6 @@ public class ApiHelper {
                                              Map<String, String> extraHeaders) {
         httpRequest.setHeader("X-Stream-Timestamp", timestamp.getTime() / 1000 + "");
 
-        //now add our additional headers passed from the services
-        if (extraHeaders!=null) {
-            for (String extraHeaderKey:extraHeaders.keySet()) {
-                httpRequest.setHeader(extraHeaderKey, extraHeaders.get(extraHeaderKey));
-            }
-        }
     }
 
     private static void setHttpRequestEntity(HttpEntityEnclosingRequestBase httpRequest, File file) {

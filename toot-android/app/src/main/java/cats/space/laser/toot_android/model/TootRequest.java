@@ -7,15 +7,25 @@ import java.io.Serializable;
  */
 public class TootRequest implements Serializable {
 
-    private String destination;
-    private String origin;
 
-    public String getDestination() {
-        return destination;
+    private String userName;
+    private String origin;
+    private String classification;
+
+    public String getClassification() {
+        return classification;
     }
 
-    public void setDestination(String destination) {
-        this.destination = destination;
+    public void setClassification(String classification) {
+        this.classification = classification;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getOrigin() {
