@@ -6,4 +6,5 @@ package cats.space.laser.toot_android;
 public class Constants {
 
     public static final String WATCH_BASE_URL = "localhost";
+    public static final String GOOGLE_API_KEY = "AIzaSyBbsLTp_XnkbExx4c8W4Q31CXhguKFZaIs";
 }
