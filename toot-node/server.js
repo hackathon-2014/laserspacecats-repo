@@ -135,13 +135,13 @@ function authenticate(req, res, next) {
 
 ///--- API
 function sendToot(req, res, next) {
-    if (!req.params.id) {
+    if (!req.headers.id) {
         req.log.warn('Missing Destination');
         next(new MissingDestinationError());
         return;
     }
 
-    models.User.findOne({_id: req.params.id}, function(err,obj) { 
+    models.User.findOne({_id: req.headers.id}, function(err,obj) { 
         if (err) {
             req.log.warn(err, 'getUser: failed to load user');
             next(new FailedToLoadError());
@@ -149,10 +149,10 @@ function sendToot(req, res, next) {
         } else {
             var toot = new models.Toot(
                 { 
-                    origin: req.params.origin,
-                    destination: req.params.id,
-                    classification: req.params.type,
-                    eta: req.params.eta
+                    origin: req.headers.origin,
+                    destination: req.headers.id,
+                    classification: req.headers.type,
+                    eta: req.headers.eta
                 }
             );
             gcmService.sendMessage(obj.registrationId, toot, function callback(err, data) {
