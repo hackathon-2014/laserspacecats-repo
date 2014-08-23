@@ -5,7 +5,7 @@ var gcmService = require('./services/gcmService');
 var mongoose = require('mongoose');
 var restify = require('restify');
 var models = require('./models');
-var _ = require('underscore');
+var async = require('async');
 
 
 ///--- Errors
@@ -135,13 +135,13 @@ function authenticate(req, res, next) {
 
 ///--- API
 function sendToot(req, res, next) {
-    if (!req.params.username) {
+    if (!req.params.id) {
         req.log.warn('Missing Destination');
         next(new MissingDestinationError());
         return;
     }
 
-    var destinationUser = models.User.findOne({username: req.params.username}, function(err,obj) { 
+    var destinationUser = models.User.findOne({_id: req.params.id}, function(err,obj) { 
         if (err) {
             req.log.warn(err, 'getUser: failed to load user');
             next(new FailedToLoadError());
@@ -204,22 +204,24 @@ function getFriends(req, res, next) {
             return;
         } else {
             var friends = [];
-
-            _.each(obj.friends, function(friend) {
+            var loadFriend = function(friend, doneCallback) {
                 models.User.findOne({_id: friend}, function(err,obj) { 
                     if (err) {
                         req.log.warn(err, 'getFriend: failed to load friend');
                         next(new FailedToLoadError());
                         res.send(400, obj);
-                        return;
+                        return doneCallback("FAIL");
                     } else {
-                        friends.push(obj);
                         req.log.debug({friend: obj}, 'getFriend: done');
+                        friends.push(obj);
+                        return doneCallback(null);
                     }
-                });
-            });
-            res.send(200, friends);
-            next();
+                }); 
+            }
+            async.each(obj.friends, loadFriend, function(err) {
+                res.send(200, friends);
+                next();
+            });     
         }
     });
 }

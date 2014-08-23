@@ -31,7 +31,7 @@ public class AddFriendsActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_add_friends);
         context = this;
 
         User user = SharedPreferencesUtil.getUser();
@@ -63,7 +63,6 @@ public class AddFriendsActivity extends Activity {
             if (users.getUsers().length!=0) {
                 userListView.setAdapter(userAdapter);
             }
-
         }
 
     }

@@ -4,12 +4,18 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+<<<<<<< HEAD
+=======
 import android.content.DialogInterface;
+>>>>>>> d87bff9747032636cb224fa556fd0b7bafd61b45
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+<<<<<<< HEAD
+=======
 import android.widget.ImageView;
+>>>>>>> d87bff9747032636cb224fa556fd0b7bafd61b45
 import android.widget.ListView;
 
 import java.util.Arrays;
@@ -33,12 +39,16 @@ public class MainActivity extends Activity {
     private Context context;
     private UserAdapter userAdapter;
     private ListView userListView;
+    private ImageButton addButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = this;
+
+        addButton = (ImageButton) findViewById(R.id.add);
+        addButton.setOnClickListener(new AddFriendOnClickListener());
 
         User user = SharedPreferencesUtil.getUser();
         UserService userService = new UserServiceImpl();
@@ -124,7 +134,13 @@ public class MainActivity extends Activity {
 
     }
 
+    private class AddFriendOnClickListener implements View.OnClickListener {
 
-
-
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(context, AddFriendsActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+    }
 }
