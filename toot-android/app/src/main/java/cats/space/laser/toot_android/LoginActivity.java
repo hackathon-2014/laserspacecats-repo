@@ -20,6 +20,7 @@ import cats.space.laser.toot_android.api.UserService;
 import cats.space.laser.toot_android.listener.AsyncTaskCompleteListener;
 import cats.space.laser.toot_android.model.ApiBase;
 import cats.space.laser.toot_android.model.User;
+import cats.space.laser.toot_android.util.ApiResponseUtil;
 import cats.space.laser.toot_android.util.SharedPreferencesUtil;
 import cats.space.laser.toot_android.util.Util;
 
@@ -133,8 +134,14 @@ public class LoginActivity extends Activity {
         @Override
         public void onTaskComplete(ApiBase result) {
 
-            SharedPreferencesUtil.setLoggedIn(true);
-
+            User response;
+            try {
+                response = (User) ApiResponseUtil.parseResponse(result, User.class);
+                if (response!=null) {
+                    SharedPreferencesUtil.setLoggedIn(true);
+                }
+            } catch (ApiException e) { //something bad happened
+            }
         }
     }
 
