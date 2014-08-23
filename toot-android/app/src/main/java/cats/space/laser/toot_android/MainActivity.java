@@ -1,21 +1,15 @@
 package cats.space.laser.toot_android;
 
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-<<<<<<< HEAD
-=======
 import android.content.DialogInterface;
->>>>>>> d87bff9747032636cb224fa556fd0b7bafd61b45
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
-<<<<<<< HEAD
-=======
-import android.widget.ImageView;
->>>>>>> d87bff9747032636cb224fa556fd0b7bafd61b45
 import android.widget.ListView;
 
 import java.util.Arrays;
