@@ -151,7 +151,7 @@ function sendToot(req, res, next) {
                 { 
                     origin: req.headers.origin,
                     destination: req.headers.id,
-                    classification: req.headers.type,
+                    classification: req.headers.classification,
                     eta: req.headers.eta
                 }
             );
