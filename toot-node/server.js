@@ -4,16 +4,29 @@ var util = require('util');
 var gcmService = require('./services/gcmService');
 var mongoose = require('mongoose');
 var restify = require('restify');
+var gcmService = require('./services/gcmService');
 
 var models = require('./models');
 
 
 ///--- Errors
-function FailedToSaveError(thing) {
+function FailedToSendTootError() {
+    restify.RestError.call(this, {
+        statusCode: 409,
+        restCode: 'FailedToSendToot',
+        message: 'failed to send toot',
+        constructorOpt: FailedToSendTootError
+    });
+
+    this.name = 'FailedToSendTootError';
+}
+util.inherits(FailedToSendTootError, restify.RestError);
+
+function FailedToSaveError() {
     restify.RestError.call(this, {
         statusCode: 409,
         restCode: 'FailedToSave',
-        message: 'failed to save '+ thing,
+        message: 'failed to save',
         constructorOpt: FailedToSaveError
     });
 
@@ -137,30 +150,50 @@ function authenticate(req, res, next) {
  * Which would have `destination` and `origin` available in req.params
  */
 function sendToot(req, res, next) {
-    if (!req.params.destination) {
+    if (!req.params.username) {
         req.log.warn('Missing Destination');
         next(new MissingDestinationError());
         return;
     }
 
+    var destinationUser = models.User.findOne({username: req.params.username}, function(err,obj) { 
+        if (err) {
+            req.log.warn(err, 'getUser: failed to load user');
+            next(new FailedToLoadError());
+            return;
+        }
+    });
+
     var toot = new models.Toot(
         { 
             origin: req.params.origin,
-            destination: req.params.destination,
+            destination: destinationUser.name,
             classification: 'arrival',
-            eta: req.params.eta
+            eta: 5
         }
     );
 
-    toot.save(function (err, fluffy) {
-        if (err) {
-            return console.error(err);
+    
+
+    gcmService.sendMessage(destinationUser.registrationId, function callback(err, data) {
+        if(err) {
+            req.log.warn(err, 'failed to send toot');
+            next(new FailedToSendTootError());
+            return;
         } else {
-            req.log.debug({toot: toot}, 'createToot: done');
-            res.send(201, toot);
-            next();
+            toot.save(function (err, fluffy) {
+                if (err) {
+                    return console.error(err);
+                } else {
+                    req.log.debug({toot: toot}, 'sendToot: success');
+                    res.send(200, toot);
+                    next();
+                }
+            }); 
         }
-    }); 
+    });
+
+    
 }
 
 function sendOTW(req, res, next) {
@@ -192,7 +225,7 @@ function getUser(req, res, next) {
             return;
         } else {
             req.log.debug({user: obj}, 'getUser: done');
-            res.send(201, obj);
+            res.send(200, obj);
             next();
         }
     });
@@ -221,7 +254,7 @@ function createUser(req, res, next) {
             return;
         } else {
             req.log.debug({user: user}, 'createUser: done');
-            res.send(201, user);
+            res.send(200, user);
             next();
         }
     }); 
