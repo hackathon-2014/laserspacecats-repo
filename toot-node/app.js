@@ -5,7 +5,7 @@ var util = require('util');
 
 var restify = require('restify');
 
-var toot = require('./lib');
+var toot = require('.server');
 
 
 ///--- Globals
@@ -21,8 +21,6 @@ var NAME = 'toot';
  * Some options, like directory/user/port are pretty cut and dry, but note
  * the 'verbose' or '-v' option afflicts the log level, repeatedly. So you
  * can run something like:
- *
- * node main.js -p 80 -vv 2>&1 | bunyan
  *
  * And the log level will be set to TRACE.
  */

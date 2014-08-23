@@ -2,6 +2,7 @@
 var fs = require('fs');
 var path = require('path');
 var util = require('util');
+var mongoose = require('mongoose');
 
 var restify = require('restify');
 
@@ -13,42 +14,12 @@ function badMessage() {
         statusCode: 409,
         restCode: 'BadMessage',
         message: 'your message is bad',
-        constructorOpt: MissingTaskError
+        constructorOpt: BadMessageError
     });
 
-    this.name = 'MissingTaskError';
+    this.name = 'BadMessageError';
 }
-util.inherits(MissingTaskError, restify.RestError);
-
-
-function TodoExistsError(name) {
-    assert.string(name, 'name');
-
-    restify.RestError.call(this, {
-        statusCode: 409,
-        restCode: 'TodoExists',
-        message: name + ' already exists',
-        constructorOpt: TodoExistsError
-    });
-
-    this.name = 'TodoExistsError';
-}
-util.inherits(TodoExistsError, restify.RestError);
-
-
-function TodoNotFoundError(name) {
-    assert.string(name, 'name');
-
-    restify.RestError.call(this, {
-        statusCode: 404,
-        restCode: 'TodoNotFound',
-        message: name + ' was not found',
-        constructorOpt: TodoNotFoundError
-    });
-
-    this.name = 'TodoNotFoundError';
-}
-util.inherits(TodoNotFoundError, restify.RestError);
+util.inherits(BadMessageError, restify.RestError);
 
 
 ///--- Formatters
@@ -94,7 +65,7 @@ function authenticate(req, res, next) {
 
     var authz = req.authorization.basic;
     if (!authz) {
-        res.setHeader('WWW-Authenticate', 'Basic realm="todoapp"');
+        res.setHeader('WWW-Authenticate', 'Basic realm="tootapp"');
         next(new restify.UnauthorizedError('authentication required'));
         return;
     }
@@ -121,14 +92,14 @@ function authenticate(req, res, next) {
  *
  * Which would have `name` and `task` available in req.params
  */
-function createTodo(req, res, next) {
+function createToot(req, res, next) {
     if (!req.params.task) {
         req.log.warn({params: p}, 'createTodo: missing task');
         next(new MissingTaskError());
         return;
     }
 
-    var todo = {
+    var toot = {
         name: req.params.name || req.params.task.replace(/\W+/g, '_'),
         task: req.params.task
     };
@@ -199,21 +170,6 @@ function deleteAll(req, res, next) {
     });
 }
 
-/**
- * Simply checks that a todo on /todo/:name was loaded.
- * Requires loadTodos to have run.
- */
-function ensureTodo(req, res, next) {
-    assert.arrayOfString(req.todos, 'req.todos');
-
-    if (req.params.name && req.todos.indexOf(req.params.name) === -1) {
-        req.log.warn('%s not found', req.params.name);
-        next(new TodoNotFoundError(req.params.name));
-    } else {
-        next();
-    }
-}
-
 
 /**
  * Loads a TODO by name
@@ -260,46 +216,6 @@ function getTodo(req, res, next) {
 
 
 /**
- * Loads up all the stored TODOs from our "database". Most of the downstream
- * handlers look for these and do some amount of enforcement on what's there.
- */
-function loadTodos(req, res, next) {
-    fs.readdir(req.dir, function (err, files) {
-        if (err) {
-            req.log.warn(err,
-                'loadTodo: unable to read %s',
-                req.dir);
-            next(err);
-        } else {
-            req.todos = files;
-
-            if (req.params.name)
-                req.todo = req.dir + '/' + req.params.name;
-
-            req.log.debug({
-                todo: req.todo,
-                todos: req.todos
-            }, 'loadTODO: done');
-
-            next();
-        }
-    });
-}
-
-
-/**
- * Simple returns the list of TODOs that were loaded.
- * This requires loadTodo to have run already.
- */
-function listTodos(req, res, next) {
-    assert.arrayOfString(req.todos, 'req.todos');
-
-    res.send(200, req.todos);
-    next();
-}
-
-
-/**
  * Replaces a TODO completely
  */
 function putTodo(req, res, next) {
@@ -342,11 +258,8 @@ function createServer(options) {
     // Note that 'version' means all routes will default to
     // 1.0.0
     var server = restify.createServer({
-        formatters: {
-            'application/todo; q=0.9': formatTodo
-        },
         log: options.log,
-        name: 'todoapp',
+        name: 'tootapp',
         version: '1.0.0'
     });
 
@@ -394,52 +307,29 @@ function createServer(options) {
 
     /// Now the real handlers. Here we just CRUD on TODO blobs
 
-    server.use(loadTodos);
-
-    server.post('/todo', createTodo);
-    server.get('/todo', listTodos);
-    server.head('/todo', listTodos);
-
-
-    // everything else requires that the TODO exist
-    server.use(ensureTodo);
+    server.post('/message/otw', sendOTW);
+    server.post('/message/toot', sendToot);
+  
+    server.post('/login', login)
 
     // Return a TODO by name
 
-    server.get('/todo/:name', getTodo);
-    server.head('/todo/:name', getTodo);
-
-    // Overwrite a complete TODO - here we require that the body
-    // be JSON - otherwise the caller will get a 415 if they try
-    // to send a different type
-    // With the body parser, req.body will be the fully JSON
-    // parsed document, so we just need to serialize and save
-    server.put({
-        path: '/todo/:name',
-        contentType: 'application/json'
-    }, putTodo);
-
-    // Delete a TODO by name
-    server.del('/todo/:name', deleteTodo);
-
-    // Destroy everything
-    server.del('/todo', deleteAll, function respond(req, res, next) {
-        res.send(204);
-        next();
-    });
+    server.get('/user/:name', getUser);
+    server.post('/user', createUser);
+    server.put('/user', updateUser);
+    server.del('/user/:name', deleteUser);
 
 
     // Register a default '/' handler
 
     server.get('/', function root(req, res, next) {
         var routes = [
-            'GET     /',
-            'POST    /todo',
-            'GET     /todo',
-            'DELETE  /todo',
-            'PUT     /todo/:name',
-            'GET     /todo/:name',
-            'DELETE  /todo/:name'
+            'POST    /message/otw',
+            'POST    /message/toot',
+            'GET     /user',
+            'PUT     /user',
+            'POST    /user'
+            'POST    /login'
         ];
         res.send(200, routes);
         next();
