@@ -135,33 +135,33 @@ function authenticate(req, res, next) {
 
 ///--- API
 function sendToot(req, res, next) {
-    if (!req.params.id) {
+    if (!req.headers.id) {
         req.log.warn('Missing Destination');
         next(new MissingDestinationError());
         return;
     }
 
-    models.User.findOne({_id: req.params.id}, function(err,obj) { 
+    models.User.findOne({_id: req.headers.id}, function(err,obj) { 
         if (err) {
             req.log.warn(err, 'getUser: failed to load user');
             next(new FailedToLoadError());
             return;
         } else {
-            gcmService.sendMessage(obj.registrationId, function callback(err, data) {
+            var toot = new models.Toot(
+                { 
+                    origin: req.headers.origin,
+                    destination: req.headers.id,
+                    classification: req.headers.type,
+                    eta: req.headers.eta
+                }
+            );
+            gcmService.sendMessage(obj.registrationId, toot, function callback(err, data) {
                 if(err) {
                     req.log.warn(err, 'failed to send toot');
                     res.send(400, toot);
                     next(new FailedToSendTootError());
                     return;
                 } else {
-                    var toot = new models.Toot(
-                        { 
-                            origin: req.params.origin,
-                            destination: obj.name,
-                            classification: req.params.type,
-                            eta: 5
-                        }
-                    );
                     toot.save(function (err, fluffy) {
                         if (err) {
                             req.log.debug({error: err}, 'sendToot: failure');
@@ -262,9 +262,15 @@ function updateUser(req, res, next) {
             res.send(400, obj);
             return;
         } else {
-            obj.password = req.params.password;
-            obj.registrationId = req.params.registrationId;
-            obj.friends = req.params.friends;
+            if(req.params.password) {
+                obj.password = req.params.password;
+            }
+            if(req.params.registrationId) {
+                obj.registrationId = req.params.registrationId;
+            }
+            if(req.params.friends) {
+                obj.friends = req.params.friends;
+            }
             obj.save(function (err, fluffy) {
                 if (err) {
                     req.log.warn('updateUser: failed to save');

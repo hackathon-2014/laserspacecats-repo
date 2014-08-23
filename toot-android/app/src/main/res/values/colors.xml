@@ -3,7 +3,9 @@
 
     <color name="dark_gray">#ff4b4b4b</color>
     <color name="lime">#ff8dc63f</color>
+    <color name="lime_alpha">#bb8dc63f</color>
     <color name="orange">#fff26c4f</color>
+    <color name="orange_alpha">#bbf26c4f</color>
     <color name="purple">#ff92278f</color>
     <color name="dark_purple">#ff605ca8</color>
     <color name="turquoise">#ff00a99d</color>
@@ -11,4 +13,5 @@
     <color name="black">#ff000000</color>
     <color name="light_gray">#ffcccccc</color>
     <color name="pink">#fff31f74</color>
+    <color name="pink_alpha">#bbf31f74</color>
 </resources>

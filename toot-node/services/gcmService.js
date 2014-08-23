@@ -2,14 +2,20 @@ var gcm = require('node-gcm');
 var mongoose = require('mongoose');
 var gcmService = {};
 
-gcmService.sendMessage = function sendMessage(regId, callback) {
+gcmService.sendMessage = function sendMessage(regId, toot, callback) {
 
     var message = new gcm.Message();
     var sender = new gcm.Sender('AIzaSyDAA_igAhJYYSym4rv0127lkVpWfL9tCHg');
     var registrationIds = [];
 
+    if(toot.classification === 'arrival') {
+        message.addData('message','Im outside');
+    } else if (toot.classification === 'otw') {
+        message.addData('message','Im on the way');
+    } else if (toot.classification === 'beer') {
+        message.addData('message','Bring Beer!!');
+    }
     message.addData('title','Toot');
-    message.addData('message','Im outside');
     message.addData('msgcnt','1');
     message.collapseKey = 'demo';
     message.delayWhileIdle = true;

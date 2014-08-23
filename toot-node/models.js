@@ -7,7 +7,7 @@ var tootSchema = new mongoose.Schema({
     type: String,
     required: true,
     default: 'arrival',
-    enum: ['arrival', 'otw']
+    enum: ['arrival', 'otw', 'beer']
   },
   eta: { 
     type: Number, 
