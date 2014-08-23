@@ -147,21 +147,21 @@ function sendToot(req, res, next) {
             next(new FailedToLoadError());
             return;
         } else {
-            gcmService.sendMessage(obj.registrationId, function callback(err, data) {
+            var toot = new models.Toot(
+                { 
+                    origin: req.params.origin,
+                    destination: req.params.id,
+                    classification: req.params.type,
+                    eta: req.params.eta
+                }
+            );
+            gcmService.sendMessage(obj.registrationId, toot, function callback(err, data) {
                 if(err) {
                     req.log.warn(err, 'failed to send toot');
                     res.send(400, toot);
                     next(new FailedToSendTootError());
                     return;
                 } else {
-                    var toot = new models.Toot(
-                        { 
-                            origin: req.params.origin,
-                            destination: obj.name,
-                            classification: req.params.type,
-                            eta: 5
-                        }
-                    );
                     toot.save(function (err, fluffy) {
                         if (err) {
                             req.log.debug({error: err}, 'sendToot: failure');
@@ -262,9 +262,15 @@ function updateUser(req, res, next) {
             res.send(400, obj);
             return;
         } else {
-            obj.password = req.params.password;
-            obj.registrationId = req.params.registrationId;
-            obj.friends = req.params.friends;
+            if(req.params.password) {
+                obj.password = req.params.password;
+            }
+            if(req.params.registrationId) {
+                obj.registrationId = req.params.registrationId;
+            }
+            if(req.params.friends) {
+                obj.friends = req.params.friends;
+            }
             obj.save(function (err, fluffy) {
                 if (err) {
                     req.log.warn('updateUser: failed to save');
