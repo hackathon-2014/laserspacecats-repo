@@ -9,7 +9,6 @@ var mongoose = require('mongoose');
 
 var tootApp = require('./server');
 
-var models = require('./models');
 
 
 
@@ -125,8 +124,22 @@ function usage(msg) {
     var db = mongoose.connection;
     db.on('error', console.error.bind(console, 'connection error:'));
     db.once('open', function callback () {
-      console.log("DB Connection Open");
+        console.log("DB Connection Open");
+        db.collection('users', {strict:true}, function(err, collection) {
+            if (err) {
+                Log.warning("Default user doesn't exist. Creating it with sample data...");
+                var user = new models.User(
+                    { 
+                        username: "Kevin",
+                        password: "password",
+                        registrationId: 1,
+                        friends: []
+                    }
+                );
+            }
+        });
     });
+
 
     var server = tootApp.createServer({
         log: LOG

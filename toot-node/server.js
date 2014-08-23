@@ -3,12 +3,24 @@ var fs = require('fs');
 var path = require('path');
 var util = require('util');
 var mongoose = require('mongoose');
+var restify = require('restify');
 
 var models = require('./models');
-var restify = require('restify');
 
 
 ///--- Errors
+function FailedToSaveError(thing) {
+    restify.RestError.call(this, {
+        statusCode: 409,
+        restCode: 'FailedToSave',
+        message: 'failed to save '+ thing,
+        constructorOpt: FailedToSaveError
+    });
+
+    this.name = 'FailedToSaveError';
+}
+util.inherits(FailedToSaveError, restify.RestError);
+
 function MissingDestinationError() {
     restify.RestError.call(this, {
         statusCode: 409,
@@ -20,6 +32,18 @@ function MissingDestinationError() {
     this.name = 'MissingDestinationError';
 }
 util.inherits(MissingDestinationError, restify.RestError);
+
+function MissingUserNameError() {
+    restify.RestError.call(this, {
+        statusCode: 409,
+        restCode: 'MissingUserName',
+        message: 'you need a username',
+        constructorOpt: MissingUserNameError
+    });
+
+    this.name = 'MissingUserNameError';
+}
+util.inherits(MissingUserNameError, restify.RestError);
 
 
 ///--- Formatters
@@ -95,12 +119,12 @@ function authenticate(req, res, next) {
  */
 function sendToot(req, res, next) {
     if (!req.params.destination) {
-        req.log.warn({params: p}, 'createToot: missing destination');
-        next(new MissingDestination());
+        req.log.warn('Missing Destination');
+        next(new MissingDestinationError());
         return;
     }
 
-    var toot = new Toot(
+    var toot = new models.Toot(
         { 
             origin: req.params.origin,
             destination: req.params.destination,
@@ -110,7 +134,13 @@ function sendToot(req, res, next) {
     );
 
     toot.save(function (err, fluffy) {
-        if (err) return console.error(err);
+        if (err) {
+            return console.error(err);
+        } else {
+            req.log.debug({toot: toot}, 'createToot: done');
+            res.send(201, toot);
+            next();
+        }
     }); 
 }
 
@@ -136,11 +166,40 @@ function sendOTW(req, res, next) {
 }
 
 function getUser(req, res, next) {
-
+    var user = models.User.findOne({username: req.params.username}, function(err,obj) { 
+        req.log.debug({user: user}, 'getUser: done');
+        res.send(201, user);
+        next();
+    });
 }
 
 function createUser(req, res, next) {
-    
+    if (!req.params.name) {
+        req.log.warn({params: p}, 'createUser: missing name');
+        next(new MissingUserNameError());
+        return;
+    }
+
+    var user = new models.User(
+        { 
+            username: req.params.username,
+            password: req.params.password,
+            registrationId: 1,
+            friends: []
+        }
+    );
+
+    user.save(function (err, fluffy) {
+        if (err) {
+            req.log.warn('createUser: failed to save');
+            next(new FailedToSaveError());
+            return;
+        } else {
+            req.log.debug({user: user}, 'createUser: done');
+            res.send(201, user);
+            next();
+        }
+    }); 
 }
 
 function updateUser(req, res, next) {
@@ -149,6 +208,13 @@ function updateUser(req, res, next) {
 
 function deleteUser(req, res, next) {
     
+}
+
+function deleteAllUsers(req, res, next) {
+    models.User.remove({}, function (err) {
+        if (err) return handleError(err);
+        // removed!
+    });
 }
 
 function login(req, res, next) {
@@ -224,6 +290,7 @@ function createServer(options) {
     server.post('/user', createUser);
     server.put('/user', updateUser);
     server.del('/user/:name', deleteUser);
+    server.del('/user/removeAll', deleteAllUsers);
 
 
     // Register a default '/' handler
@@ -235,6 +302,7 @@ function createServer(options) {
             'GET     /user',
             'PUT     /user',
             'POST    /user',
+            'GET     /user/removeAll',
             'POST    /login'
         ];
         res.send(200, routes);
