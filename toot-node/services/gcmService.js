@@ -1,5 +1,6 @@
 var gcm = require('node-gcm');
-var gcmService = module.exports = {};
+var mongoose = require('mongoose');
+var gcmService = {};
 
 gcmService.sendMessage = function sendMessage() {
 
@@ -28,8 +29,4 @@ gcmService.sendMessage = function sendMessage() {
      **/
 }
 
-///--- Exports
-
-module.exports = {
-    gcm: gcm
-};
+module.exports = gcmService;

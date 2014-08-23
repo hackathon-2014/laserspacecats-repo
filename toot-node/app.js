@@ -2,16 +2,47 @@
 var fs = require('fs');
 var path = require('path');
 var util = require('util');
-
 var restify = require('restify');
+var getopt = require('posix-getopt');
+var bunyan = require('bunyan');
+var mongoose = require('mongoose');
 
-var toot = require('.server');
+var tootApp = require('./server');
+
+var models = require('./models');
+
 
 
 ///--- Globals
 
-var NAME = 'toot';
+var NAME = 'tootApp';
 
+// In true UNIX fashion, debug messages go to stderr, and audit records go
+// to stdout, so you can split them as you like in the shell
+var LOG = bunyan.createLogger({
+    name: NAME,
+    streams: [
+        {
+            level: (process.env.LOG_LEVEL || 'info'),
+            stream: process.stderr
+        },
+        {
+            // This ensures that if we get a WARN or above all debug records
+            // related to that request are spewed to stderr - makes it nice
+            // filter out debug messages in prod, but still dump on user
+            // errors so you can debug problems
+            level: 'debug',
+            type: 'raw',
+            stream: new restify.bunyan.RequestCaptureStream({
+                level: bunyan.WARN,
+                maxRecords: 100,
+                maxRequestIds: 1000,
+                stream: process.stderr
+            })
+        }
+    ],
+    serializers: restify.bunyan.serializers
+});
 
 ///--- Helpers
 
@@ -88,19 +119,16 @@ function usage(msg) {
 
     LOG.debug(options, 'command line arguments parsed');
 
-    // First setup our 'database'
-    var dir = path.normalize((options.directory || '/tmp') + '/todos');
-    try {
-        fs.mkdirSync(dir);
-    } catch (e) {
-        if (e.code !== 'EEXIST') {
-            LOG.fatal(e, 'unable to create "database" %s', dir);
-            process.exit(1);
-        }
-    }
+    // First setup our database
+    // Database Init
+    mongoose.connect('mongodb://localhost/test');
+    var db = mongoose.connection;
+    db.on('error', console.error.bind(console, 'connection error:'));
+    db.once('open', function callback () {
+      console.log("DB Connection Open");
+    });
 
-    var server = toot.createServer({
-        directory: dir,
+    var server = tootApp.createServer({
         log: LOG
     });
 
