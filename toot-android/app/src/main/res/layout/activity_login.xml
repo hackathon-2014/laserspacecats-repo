@@ -6,17 +6,25 @@
     android:layout_height="match_parent"
     style="@style/page">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:id="@+id/logo"/>
+
     <TextView
+        android:id="@+id/username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/username"
         android:text="username"/>
     <TextView
+        android:id="@+id/password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/password"
         android:text="password"/>
-    <TextView
+    <Button
+        android:id="@+id/sign_in"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/sign_in"

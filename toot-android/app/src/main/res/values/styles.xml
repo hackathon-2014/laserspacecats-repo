@@ -19,6 +19,19 @@
         <item name="android:textAllCaps">true</item>
     </style>
 
+    <style name="user_row">
+        <item name="android:background">@color/dark_purple</item>
+        <item name="android:padding">20dp</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="username_row">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">16dp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:layout_centerVertical">true</item>
+    </style>
+
     <style name="password">
         <item name="android:background">@color/orange</item>
         <item name="android:padding">20dp</item>

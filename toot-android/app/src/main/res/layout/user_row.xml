@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+style="@style/user_row">
+    <TextView
+        android:id="@+id/username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/username_row"
+        android:text="username"
+        android:layout_alignParentLeft="true"/>
+
+    <FrameLayout
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/button_background"
+        android:layout_gravity="center"
+        android:layout_alignParentRight="true"
+        android:id="@+id/button_car">
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="fitCenter"
+            android:layout_gravity="center"
+            android:background="@android:color/transparent"
+            android:src="@drawable/icon_car"/>
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/button_background"
+        android:layout_gravity="center"
+        android:layout_toLeftOf="@id/button_car"
+        android:layout_marginRight="20dp"
+        android:id="@+id/button_horn">
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="fitCenter"
+            android:layout_gravity="center"
+            android:background="@android:color/transparent"
+            android:src="@drawable/icon_horn"/>
+
+    </FrameLayout>
+</RelativeLayout>

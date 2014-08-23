@@ -38,6 +38,7 @@ import java.util.Map;
 
 import cats.space.laser.toot_android.Constants;
 import cats.space.laser.toot_android.listener.AsyncTaskCompleteListener;
+import cats.space.laser.toot_android.model.OAuthTokenResponse;
 
 
 /**
@@ -47,6 +48,10 @@ public class ApiHelper {
 
     // API URL
     private static int timeout = 10000;
+    public static final String GET_USER = "/v1/user";
+    public static final String PUT_TOOT = "/v1/toot";
+    public static final String PUT_USER = "/v1/user";
+
 
     public static void get(String url, Context context, Type type,
                            AsyncTaskCompleteListener<Object> callback, Map<String, String> headers) {
@@ -260,8 +265,13 @@ public class ApiHelper {
             String responseJson = parseHttpResponse(response);
             Gson gson = new Gson();
 
+            // If an error occurs due to expiring token, refresh & retry
+            if (responseJson.contains(Constants.TOKEN_AUTH_ERROR_MESSAGE)) {
+                responseJson = retryRequest(httpRequest, httpClient, context);
+            }
+
             // If an error occurs when interacting with the API
-            Boolean isErrorResponse = responseJson.contains("error");
+            Boolean isErrorResponse = responseJson.contains(Constants.API_ERROR_MESSAGE);
             if(responseJson == null || isErrorResponse) {
                 result = gson.fromJson(responseJson, ApiError.class);
             }
@@ -312,6 +322,11 @@ public class ApiHelper {
             HttpResponse response = httpClient.execute(httpRequest);
             String responseJson = parseHttpResponse(response);
             Gson gson = new Gson();
+
+            // If an error occurs due to expiring token, refresh & retry
+            if (responseJson.contains(Constants.TOKEN_AUTH_ERROR_MESSAGE)) {
+                responseJson = retryRequest(httpRequest, httpClient, context);
+            }
 
             // If an error occurs when interacting with the API
             Boolean isErrorResponse = responseJson.contains(Constants.API_ERROR_MESSAGE);
@@ -368,6 +383,11 @@ public class ApiHelper {
             HttpResponse response = httpClient.execute(httpRequest);
             String responseJson = parseHttpResponse(response);
             Gson gson = new Gson();
+
+            // If an error occurs due to expiring token, refresh & retry
+            if (responseJson.contains(Constants.TOKEN_AUTH_ERROR_MESSAGE)) {
+                responseJson = retryRequest(httpRequest, httpClient, context);
+            }
 
             // If an error occurs when interacting with the API
             Boolean isErrorResponse = responseJson.contains(Constants.API_ERROR_MESSAGE) || responseJson.contains("401 Unauthorized");
@@ -454,6 +474,13 @@ public class ApiHelper {
             }
         }
     }
+
+    private static String retryRequest(HttpRequestBase request, HttpClient client,
+                                             Context context) throws IOException {
+
+        return "";
+    }
+
 
     private static String parseHttpResponse(HttpResponse httpResponse) {
 
