@@ -59,8 +59,6 @@ public class UserAdapter extends ArrayAdapter<User> {
             holder = new UserHolder();
             holder.username = (TextView) row.findViewById(R.id.username);
 
-            holder.dialog = DialogUtil.getProgressDialog(context,"Sending toot...");
-
             holder.toot = (FrameLayout) row.findViewById(R.id.button_horn);
             holder.omw = (FrameLayout) row.findViewById(R.id.button_car);
             holder.beer = (FrameLayout) row.findViewById(R.id.button_beer);
@@ -80,6 +78,8 @@ public class UserAdapter extends ArrayAdapter<User> {
         } else {
             holder = (UserHolder)row.getTag();
         }
+
+        holder.dialog = DialogUtil.getProgressDialog(context,"Sending toot...");
 
         holder.username.setText(user.getUsername());
         holder.username.setTypeface(type);
