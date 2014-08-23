@@ -180,7 +180,7 @@ function sendToot(req, res, next) {
 }
 
 function getUser(req, res, next) {
-    models.User.findOne({username: req.params.name}, function(err,obj) { 
+    models.User.findOne({username: req.headers.name}, function(err,obj) { 
         if (err) {
             req.log.warn(err, 'getUser: failed to load user');
             next(new FailedToLoadError());
@@ -195,7 +195,7 @@ function getUser(req, res, next) {
 }
 
 function getFriends(req, res, next) {
-    models.User.findOne({username: req.params.name}, function(err,obj) { 
+    models.User.findOne({username: req.headers.name}, function(err,obj) { 
         if (err) {
             req.log.warn(err, 'getUser: failed to load user');
             next(new FailedToLoadError());
@@ -226,7 +226,7 @@ function getFriends(req, res, next) {
 }
 
 function createUser(req, res, next) {
-    if (!req.params.username) {
+    if (!req.headers.username) {
         req.log.warn('createUser: missing name');
         next(new MissingUserNameError());
         return;
@@ -234,9 +234,9 @@ function createUser(req, res, next) {
 
     var user = new models.User(
         { 
-            username: req.params.username,
-            password: req.params.password,
-            registrationId: req.params.registrationId,
+            username: req.headers.username,
+            password: req.headers.password,
+            registrationId: req.headers.registrationId,
             friends: []
         }
     );
@@ -255,21 +255,21 @@ function createUser(req, res, next) {
 }
 
 function updateUser(req, res, next) {
-    models.User.findOne({_id: req.params.id}, function(err,obj) { 
+    models.User.findOne({_id: req.headers.id}, function(err,obj) { 
         if (err) {
             req.log.warn(err, 'getUser: failed to load user');
             next(new FailedToLoadError());
             res.send(400, obj);
             return;
         } else {
-            if(req.params.password) {
-                obj.password = req.params.password;
+            if(req.headers.password) {
+                obj.password = req.headers.password;
             }
-            if(req.params.registrationId) {
-                obj.registrationId = req.params.registrationId;
+            if(req.headers.registrationId) {
+                obj.registrationId = req.headers.registrationId;
             }
-            if(req.params.friends) {
-                obj.friends = req.params.friends;
+            if(req.headers.friends) {
+                obj.friends = req.headers.friends;
             }
             obj.save(function (err, fluffy) {
                 if (err) {
