@@ -43,6 +43,7 @@ public class LoginActivity extends Activity {
         setContentView(R.layout.activity_login);
 
         context = getApplicationContext();
+        SharedPreferencesUtil.clearSharedPrefs();
 
         Typeface type = Typeface.createFromAsset(context.getAssets(),"century_gothic.TTF");
 
@@ -54,6 +55,10 @@ public class LoginActivity extends Activity {
         Button signIn = (Button) findViewById(R.id.sign_in);
         signIn.setOnClickListener(new LoginOnClickListener());
         signIn.setTypeface(type);
+
+        Button signUp = (Button) findViewById(R.id.sign_up);
+        signUp.setOnClickListener(new SignUpOnClickListener());
+        signUp.setTypeface(type);
 
         // if user already saved, go to main screen
         if (SharedPreferencesUtil.isLoggedIn()) {
@@ -84,6 +89,17 @@ public class LoginActivity extends Activity {
                 Toast.makeText(context,R.string.invalid_username,Toast.LENGTH_SHORT).show();
             } else {
                 startLogin();
+            }
+        }
+    }
+
+    public class SignUpOnClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            if (username.getText().toString().equals("") || password.getText().toString().equals("")) {
+                Toast.makeText(context,R.string.invalid_username,Toast.LENGTH_SHORT).show();
+            } else {
+                startSignUp();
             }
         }
     }
@@ -124,10 +140,22 @@ public class LoginActivity extends Activity {
 
         UserService userService = new UserServiceImpl();
 
-
-        // log in
+        // login
         try {
-            userService.createUserAsynchronous(getUserFromScreen(), context, new LoginResponseListener());
+            userService.loginAsynchronous(getUserFromScreen(), context, new LoginResponseListener());
+        } catch (ApiException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void startSignUp() {
+
+        UserService userService = new UserServiceImpl();
+
+        // check to see if user exists
+        try {
+            userService.checkUserAsynchronous(getUserFromScreen(), context, new UserAvailableResponseListener());
         } catch (ApiException e) {
             e.printStackTrace();
         }
@@ -152,16 +180,46 @@ public class LoginActivity extends Activity {
             User response;
             try {
                 response = (User) ApiResponseUtil.parseResponse(result, User.class);
-                if (response!=null) {
+                if (response.get_id()!=null) {
                     SharedPreferencesUtil.setLoggedIn(true);
                     SharedPreferencesUtil.saveUser(response);
                     Intent intent = new Intent(context,MainActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
+                } else {
+                    Toast.makeText(context,R.string.invalid_login,Toast.LENGTH_SHORT).show();
                 }
             } catch (ApiException e) { //something bad happened
             }
         }
     }
+
+    private class UserAvailableResponseListener implements AsyncTaskCompleteListener<Boolean> {
+
+        @Override
+        public void onTaskComplete(Boolean result) {
+
+            UserService userService = new UserServiceImpl();
+            Boolean response;
+            response = (Boolean) result;
+            if (result==null) { // user doesn't exist, create user
+                // create user
+                try {
+                    userService.createUserAsynchronous(getUserFromScreen(), context, new LoginResponseListener());
+                } catch (ApiException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                // user exists, login
+                try {
+                    userService.loginAsynchronous(getUserFromScreen(), context, new LoginResponseListener());
+                } catch (ApiException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+
 
 }

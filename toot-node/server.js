@@ -124,8 +124,8 @@ function authenticate(req, res, next) {
         next(new restify.UnauthorizedError('authentication required'));
         return;
     }
-
-    if (authz.username !== req.allow.user || authz.password !== req.allow.pass) {
+    console.log(req.allow.pass);
+    if (req.allow.user.indexOf(authz.username) === -1 || authz.password !== req.allow.password) {
         next(new restify.ForbiddenError('invalid credentials'));
         return;
     }
@@ -190,6 +190,19 @@ function getUser(req, res, next) {
             req.log.debug({user: obj}, 'getUser: done');
             res.send(200, obj);
             next();
+        }
+    });
+}
+
+function userExists(req, res, next) {
+    models.User.findOne({username: req.params.name}, function(err,obj) {
+        if (obj) {
+            req.log.debug({user: obj}, 'getUser: done');
+            res.send(200, true);
+            next();
+        } else {
+            res.send(400, false);
+            return;
         }
     });
 }
@@ -341,8 +354,26 @@ function deleteAllUsers(req, res, next) {
     });
 }
 
-function login(req, res, next) {
-    
+function authenticateUser(req, res, next) {
+
+    models.User.findOne({username: req.params.username}, function(err,obj) { 
+        if (err) {
+            req.log.warn(err, 'getUser: failed to load user');
+            next(new FailedToLoadError());
+            res.send(400, obj);
+            return;
+        } else {
+            if(obj && obj.password == req.params.password) {
+                req.log.debug({user: obj}, 'authenticated: true');
+                res.send(200, obj);
+                next();
+            } else {
+                next(new restify.ForbiddenError('invalid credentials'));
+                return;
+            }
+        }
+    });
+
 }
 
 /**
@@ -390,7 +421,6 @@ function createServer(options) {
     // Here we only use basic auth, but really you should look
     // at https://github.com/joyent/node-http-signature
     server.use(function setup(req, res, next) {
-        req.dir = options.directory;
         if (options.user && options.password) {
             req.allow = {
                 user: options.user,
@@ -403,19 +433,16 @@ function createServer(options) {
 
     /// Now the real handlers. Here we just CRUD on TODO blobs
     server.post('/message/toot', sendToot);
-  
-    server.post('/login', login)
-
-    // Return a TODO by name
-
     server.get('/user/:name', getUser);
     server.post('/user', createUser);
     server.put('/user', updateUser);
     server.del('/user/:name', deleteUser);
+    server.get('/user/:name/exists', userExists);
     server.del('/user/removeAll', deleteAllUsers);
     server.get('/users', getAllUsers);
     server.get('/user/:name/friends', getFriends);
     server.post('/user/addFriends', addFriends);
+    server.post('/user/authenticate', authenticateUser);
 
     server.get('/testGCM', testGCM);
 
@@ -429,9 +456,10 @@ function createServer(options) {
             'PUT     /user',
             'POST    /user',
             'GET     /users',
-            'POST    /login',
+            'POST    /user/authenticate',
             'GET     /user/:name/friends',
-            'POST    /user/addFriends'
+            'POST    /user/addFriends',
+            'GET     /user/:name/exists'
         ];
         res.send(200, routes);
         next();
