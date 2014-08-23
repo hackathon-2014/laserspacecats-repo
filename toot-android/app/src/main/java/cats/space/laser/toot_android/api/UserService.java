@@ -8,6 +8,7 @@ import java.io.File;
 import cats.space.laser.toot_android.api.ApiException;
 import cats.space.laser.toot_android.listener.AsyncTaskCompleteListener;
 import cats.space.laser.toot_android.model.AddFriend;
+import cats.space.laser.toot_android.model.RemoveFriend;
 import cats.space.laser.toot_android.model.User;
 
 /**
@@ -22,6 +23,9 @@ public interface UserService {
             throws ApiException;
 
     void addFriendsAsynchronous(AddFriend user, Context context, AsyncTaskCompleteListener listener)
+            throws ApiException;
+
+    void removeFriendsAsynchronous(RemoveFriend user, Context context, AsyncTaskCompleteListener listener)
             throws ApiException;
 
     void getUsersAsynchronous(User user, Context context, AsyncTaskCompleteListener listener)

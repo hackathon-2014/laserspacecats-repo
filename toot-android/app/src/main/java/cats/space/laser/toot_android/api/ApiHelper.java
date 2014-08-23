@@ -52,7 +52,8 @@ public class ApiHelper {
     public static final String CREATE_USER = "/user";
     public static final String LOGIN = "/user/authenticate";
     public static final String UPDATE_USER = "/user";
-    public static final String ADD_FRIENDS = "/user/addFriends";
+    public static final String ADD_FRIEND = "/user/addFriends";
+    public static final String REMOVE_FRIEND = "/user/removeFriend";
     public static final String TOOT = "/message/toot";
     public static final String TOOT_BEER = "/message/beer";
 

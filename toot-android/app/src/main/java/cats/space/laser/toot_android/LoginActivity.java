@@ -43,7 +43,6 @@ public class LoginActivity extends Activity {
         setContentView(R.layout.activity_login);
 
         context = getApplicationContext();
-        SharedPreferencesUtil.clearSharedPrefs();
 
         Typeface type = Typeface.createFromAsset(context.getAssets(),"century_gothic.TTF");
 
