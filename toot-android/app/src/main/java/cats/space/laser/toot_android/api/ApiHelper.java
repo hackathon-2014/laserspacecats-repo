@@ -1,4 +1,4 @@
-package cats.space.laser.toot_android;
+package cats.space.laser.toot_android.api;
 
 import android.content.Context;
 import android.os.AsyncTask;

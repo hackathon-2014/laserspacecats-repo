@@ -1,4 +1,4 @@
-package cats.space.laser.toot_android;
+package cats.space.laser.toot_android.api;
 
 /**
  * Created by Whitney Champion on 8/23/14.

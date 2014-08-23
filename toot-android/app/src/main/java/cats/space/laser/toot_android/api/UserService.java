@@ -1,4 +1,4 @@
-package cats.space.laser.toot_android;
+package cats.space.laser.toot_android
 
 import android.content.Context;
 
