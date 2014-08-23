@@ -22,6 +22,17 @@ function FailedToSaveError(thing) {
 }
 util.inherits(FailedToSaveError, restify.RestError);
 
+function FailedToLoadError() {
+    restify.RestError.call(this, {
+        statusCode: 409,
+        restCode: 'FailedToLoad',
+        message: 'failed to load user',
+        constructorOpt: FailedToLoadError
+    });
+    this.name = 'FailedToLoadError';
+}
+util.inherits(FailedToLoadError, restify.RestError);
+
 function MissingDestinationError() {
     restify.RestError.call(this, {
         statusCode: 409,
@@ -173,16 +184,23 @@ function sendOTW(req, res, next) {
 }
 
 function getUser(req, res, next) {
-    var user = models.User.findOne({username: req.params.username}, function(err,obj) { 
-        req.log.debug({user: user}, 'getUser: done');
-        res.send(201, user);
-        next();
+    req.log.warn(req.params);
+    models.User.findOne({username: req.params.name}, function(err,obj) { 
+        if (err) {
+            req.log.warn(err, 'getUser: failed to load user');
+            next(new FailedToLoadError());
+            return;
+        } else {
+            req.log.debug({user: obj}, 'getUser: done');
+            res.send(201, obj);
+            next();
+        }
     });
 }
 
 function createUser(req, res, next) {
-    if (!req.params.name) {
-        req.log.warn({params: p}, 'createUser: missing name');
+    if (!req.params.username) {
+        req.log.warn('createUser: missing name');
         next(new MissingUserNameError());
         return;
     }
@@ -191,7 +209,7 @@ function createUser(req, res, next) {
         { 
             username: req.params.username,
             password: req.params.password,
-            registrationId: 1,
+            registrationId: req.params.registrationId,
             friends: []
         }
     );
