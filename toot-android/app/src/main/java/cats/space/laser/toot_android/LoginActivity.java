@@ -3,6 +3,7 @@ package cats.space.laser.toot_android;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,6 +33,8 @@ public class LoginActivity extends Activity {
     private Context context;
     private GoogleCloudMessaging gcm;
     private String regId;
+    private EditText username;
+    private EditText password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +42,17 @@ public class LoginActivity extends Activity {
         setContentView(R.layout.activity_login);
 
         context = getApplicationContext();
+
+        Typeface type = Typeface.createFromAsset(context.getAssets(),"century_gothic.TTF");
+
+        username = (EditText) findViewById(R.id.username);
+        username.setTypeface(type);
+        password = (EditText) findViewById(R.id.password);
+        password.setTypeface(type);
+
         Button signIn = (Button) findViewById(R.id.sign_in);
         signIn.setOnClickListener(new LoginOnClickListener());
+        signIn.setTypeface(type);
 
         // if user already saved, go to main screen
         if (SharedPreferencesUtil.isLoggedIn()) {
@@ -119,8 +131,6 @@ public class LoginActivity extends Activity {
 
     private User getUserFromScreen() {
 
-        EditText username = (EditText) findViewById(R.id.username);
-        EditText password = (EditText) findViewById(R.id.password);
         User user = new User();
         user.setUsername(username.getText().toString());
         user.setRegistrationId(regId);
