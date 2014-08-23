@@ -19,6 +19,10 @@ public class GcmIntentService extends IntentService {
     private NotificationManager mNotificationManager;
     Context context;
 
+    private static final String OTW = "I'm outside";
+    private static final String ARRIVED = "I'm outside";
+    private static final String BRING_BEER = "Bring Beer!!";
+
     public GcmIntentService() {
         super("GcmIntentService");
     }
@@ -49,10 +53,16 @@ public class GcmIntentService extends IntentService {
     private void sendNotification(String message, String url) {
         mNotificationManager = (NotificationManager)
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
-
-        // if it's a new subscriber, open the subscribing user's profile
-        if (url==null) {
-
+//
+//
+//        if (message.equals())
+//        if(toot.classification === 'arrival') {
+//            message.addData('message','I\'m outside');
+//        } else if (toot.classification === 'otw') {
+//            message.addData('message','I\'m on the way');
+//        } else if (toot.classification === 'beer') {
+//            message.addData('message','Bring Beer!!');
+//
             // build a correct, finalized url
             String finalizedUrl = Constants.API_URL+"/"+message.split(" ")[0];
 
@@ -76,32 +86,5 @@ public class GcmIntentService extends IntentService {
             mBuilder.setContentIntent(pendingIntent);
             mBuilder.setSound(Uri.parse("android.resource://" + context.getPackageName() + "/"+R.raw.sport_air_horn_reverb));
             mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
-
-        } else { // open the browser
-
-            // build a correct, finalized url
-            String finalizedUrl = String.format("%s%s", Constants.API_URL, url);
-
-            // build the pending activity
-            Intent actionIntent = new Intent(Intent.ACTION_VIEW);
-            actionIntent.setData(Uri.parse(finalizedUrl));
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, actionIntent, 0);
-
-            // build the notification
-            NotificationCompat.Builder mBuilder =
-                    new NotificationCompat.Builder(this)
-                            .setSmallIcon(R.drawable.ic_launcher)
-                            .setAutoCancel(true)
-                            .setLights(0xFF73da66, 1000, 2000)
-                            .setContentTitle("Cat Notification")
-                            .setStyle(new NotificationCompat.BigTextStyle()
-                                    .bigText(message))
-                            .setContentText(message);
-
-            // submit the notification
-            mBuilder.setContentIntent(pendingIntent);
-            mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
-
-        }
     }
 }
