@@ -194,6 +194,18 @@ function getUser(req, res, next) {
     });
 }
 
+function userExists(req, res, next) {
+    models.User.findOne({username: req.params.name}, function(err,obj) { 
+        if (err) {
+            res.send(200, false);
+            next();
+        } else {
+            res.send(400, true);
+            next();
+        }
+    });
+}
+
 function getFriends(req, res, next) {
     models.User.findOne({username: req.params.name}, function(err,obj) { 
         if (err) {
@@ -412,6 +424,7 @@ function createServer(options) {
     server.post('/user', createUser);
     server.put('/user', updateUser);
     server.del('/user/:name', deleteUser);
+    server.get('/user/:name/exists', userExists);
     server.del('/user/removeAll', deleteAllUsers);
     server.get('/users', getAllUsers);
     server.get('/user/:name/friends', getFriends);
@@ -431,7 +444,8 @@ function createServer(options) {
             'GET     /users',
             'POST    /login',
             'GET     /user/:name/friends',
-            'POST    /user/addFriends'
+            'POST    /user/addFriends',
+            'GET     /user/:name/exists'
         ];
         res.send(200, routes);
         next();
