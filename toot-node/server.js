@@ -305,6 +305,31 @@ function getAllUsers(req, res, next) {
     });
 }
 
+function addFriends(req, res, next) {
+    models.User.findOne({_id: req.params.id}, function(err,obj) { 
+        if (err) {
+            req.log.warn(err, 'getUser: failed to load user');
+            next(new FailedToLoadError());
+            res.send(400, obj);
+            return;
+        } else {
+            obj.friends.push(req.params.friends);
+            obj.save(function (err, fluffy) {
+                if (err) {
+                    req.log.warn('addFriends: failed to add friends');
+                    res.send(400, obj);
+                    next(new FailedToSaveError());
+                    return;
+                } else {
+                    req.log.debug({user: obj}, 'addFriends: done');
+                    res.send(200, obj);
+                    next();
+                }
+            }); 
+        }
+    });
+}
+
 function deleteUser(req, res, next) {
     
 }
@@ -390,6 +415,7 @@ function createServer(options) {
     server.del('/user/removeAll', deleteAllUsers);
     server.get('/users', getAllUsers);
     server.get('/user/:name/friends', getFriends);
+    server.post('/user/addFriends', addFriends);
 
     server.get('/testGCM', testGCM);
 
@@ -404,7 +430,8 @@ function createServer(options) {
             'POST    /user',
             'GET     /users',
             'POST    /login',
-            'GET     /user/:name/friends'
+            'GET     /user/:name/friends',
+            'POST    /user/addFriends'
         ];
         res.send(200, routes);
         next();
