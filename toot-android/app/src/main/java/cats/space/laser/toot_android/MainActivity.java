@@ -47,11 +47,25 @@ public class MainActivity extends Activity {
         ImageButton settings = (ImageButton) findViewById(R.id.settings);
         settings.setOnClickListener(new SettingsOnClickListener());
 
+        ImageButton add = (ImageButton) findViewById(R.id.add);
+        add.setOnClickListener(new AddOnClickListener());
+
         try {
             userService.getUsersAsynchronous(user, context, new GetUsersListener());
         } catch (ApiException e) {
             e.printStackTrace();
         }
+    }
+
+    class AddOnClickListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View view) {
+            Intent intent = new Intent(context,AddFriendsActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+
     }
 
     class SettingsOnClickListener implements View.OnClickListener {

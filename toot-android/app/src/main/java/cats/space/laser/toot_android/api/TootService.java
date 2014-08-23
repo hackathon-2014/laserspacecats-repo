@@ -11,4 +11,6 @@ public interface TootService {
 
     void sendTootOTWAsync(String fromId, String toId, Context context, AsyncTaskCompleteListener listener) throws ApiException;
     void sendTootHereAsync(String fromId, String toId, Context context, AsyncTaskCompleteListener listener) throws ApiException;
+    void sendTootBeerAsync(String fromId, String toId, Context context, AsyncTaskCompleteListener listener) throws ApiException;
+
 }

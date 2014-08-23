@@ -56,10 +56,12 @@ public class UserAdapter extends ArrayAdapter<User> {
             holder.username = (TextView) row.findViewById(R.id.username);
             holder.toot = (FrameLayout) row.findViewById(R.id.button_horn);
             holder.omw = (FrameLayout) row.findViewById(R.id.button_car);
+            holder.beer = (FrameLayout) row.findViewById(R.id.button_beer);
 
             row.setTag(holder);
             row.setTag(R.id.button_car, holder.omw);
             row.setTag(R.id.button_horn, holder.toot);
+            row.setTag(R.id.button_beer, holder.beer);
 
         } else {
             holder = (UserHolder)row.getTag();
@@ -69,6 +71,7 @@ public class UserAdapter extends ArrayAdapter<User> {
         holder.username.setOnClickListener(new UsernameOnClickListener(user.getUsername()));
         holder.toot.setOnClickListener(new TootOnClickListener(user.get_id()));
         holder.omw.setOnClickListener(new OmwOnClickListener(user.get_id()));
+        holder.beer.setOnClickListener(new BeerOnClickListener(user.get_id()));
 
         return row;
     }
@@ -77,6 +80,7 @@ public class UserAdapter extends ArrayAdapter<User> {
         TextView username;
         FrameLayout toot;
         FrameLayout omw;
+        FrameLayout beer;
     }
 
     public class UsernameOnClickListener implements View.OnClickListener {
@@ -106,6 +110,25 @@ public class UserAdapter extends ArrayAdapter<User> {
             User user = SharedPreferencesUtil.getUser();
             try {
                 tootService.sendTootHereAsync(user.get_id(), id, context, new TootResponseListener());
+            } catch (ApiException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public class BeerOnClickListener implements View.OnClickListener {
+
+        String id;
+
+        public BeerOnClickListener(String id) {
+            this.id = id;
+        }
+
+        @Override
+        public void onClick(View view) {
+            User user = SharedPreferencesUtil.getUser();
+            try {
+                tootService.sendTootBeerAsync(user.get_id(), id, context, new TootResponseListener());
             } catch (ApiException e) {
                 e.printStackTrace();
             }
