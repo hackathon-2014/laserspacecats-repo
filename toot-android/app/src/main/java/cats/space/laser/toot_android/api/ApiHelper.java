@@ -1,4 +1,4 @@
-package com.sparc.stream.Api;
+package cats.space.laser.toot_android;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -6,10 +6,6 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.sparc.stream.Api.Impl.TokenServiceImpl;
-import com.sparc.stream.Common.Constants;
-import com.sparc.stream.Listener.AsyncTaskCompleteListener;
-import com.sparc.stream.Model.OAuthTokenResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;

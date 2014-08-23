@@ -1,9 +1,8 @@
-package com.sparc.stream.Api;
+package cats.space.laser.toot_android;
 
-import com.sparc.stream.Model.ApiBase;
 
 /**
- * Created by Whitney Champion on 4/18/14.
+ * Created by Whitney Champion on 8/23/14.
  */
 
 public class ApiError extends ApiBase {

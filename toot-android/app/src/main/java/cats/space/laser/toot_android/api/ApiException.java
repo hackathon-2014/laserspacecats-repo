@@ -1,7 +1,7 @@
-package com.sparc.stream.Api;
+package cats.space.laser.toot_android;
 
 /**
- * Created by ryanmoore on 4/21/14.
+ * Created by Whitney Champion on 8/23/14.
  */
 public class ApiException extends Exception {
 

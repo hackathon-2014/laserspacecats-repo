@@ -1,16 +1,12 @@
-package com.sparc.stream.Api;
+package cats.space.laser.toot_android;
 
 import android.content.Context;
 
-import com.sparc.stream.Listener.AsyncTaskCompleteListener;
-import com.sparc.stream.Model.NewPassword;
-import com.sparc.stream.Model.SocialUserAuthResponse;
-import com.sparc.stream.Model.User;
 
 import java.io.File;
 
 /**
- * Created by ryanmoore on 4/22/14.
+ * Created by Whitney Champion on 8/23/14.
  */
 public interface UserService {
 
