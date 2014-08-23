@@ -2,7 +2,6 @@ package cats.space.laser.toot_android.api;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 
 import com.google.gson.Gson;
