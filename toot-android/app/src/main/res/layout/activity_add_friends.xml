@@ -13,7 +13,11 @@
         <ListView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/users"/>
+            android:id="@+id/users"
+            android:scrollbars="vertical"
+            android:scrollbarThumbVertical="@drawable/scrollbar"
+            android:dividerHeight="6dp"
+            android:divider="@android:color/transparent"/>
 
     </FrameLayout>
 
