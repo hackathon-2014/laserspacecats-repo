@@ -67,8 +67,8 @@ public class UserAdapter extends ArrayAdapter<User> {
 
         holder.username.setText(user.getUsername());
         holder.username.setOnClickListener(new UsernameOnClickListener(user.getUsername()));
-        holder.toot.setOnClickListener(new TootOnClickListener(user.getId()));
-        holder.omw.setOnClickListener(new OmwOnClickListener(user.getId()));
+        holder.toot.setOnClickListener(new TootOnClickListener(user.get_id()));
+        holder.omw.setOnClickListener(new OmwOnClickListener(user.get_id()));
 
         return row;
     }
@@ -105,7 +105,7 @@ public class UserAdapter extends ArrayAdapter<User> {
         public void onClick(View view) {
             User user = SharedPreferencesUtil.getUser();
             try {
-                tootService.sendTootHereAsync(user.getId(), id, context, new TootResponseListener());
+                tootService.sendTootHereAsync(user.get_id(), id, context, new TootResponseListener());
             } catch (ApiException e) {
                 e.printStackTrace();
             }
@@ -124,7 +124,7 @@ public class UserAdapter extends ArrayAdapter<User> {
         public void onClick(View view) {
             User user = SharedPreferencesUtil.getUser();
             try {
-                tootService.sendTootHereAsync(user.getId(), id, context, new TootResponseListener());
+                tootService.sendTootHereAsync(user.get_id(), id, context, new TootResponseListener());
             } catch (ApiException e) {
                 e.printStackTrace();
             }

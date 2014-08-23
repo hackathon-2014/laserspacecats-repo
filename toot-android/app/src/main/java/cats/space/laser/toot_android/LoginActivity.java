@@ -122,6 +122,7 @@ public class LoginActivity extends Activity {
         EditText password = (EditText) findViewById(R.id.password);
         User user = new User();
         user.setUsername(username.getText().toString());
+        user.setRegistrationId(regId);
         user.setPassword(password.getText().toString());
 
         return user;

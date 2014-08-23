@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
         //try to make call
         String url = ApiHelper.CREATE_USER;
         try {
-            ApiHelper.post(url, userJson, context, UserResponse.class, null);
+            ApiHelper.post(url, userJson, context, UserResponse.class, null, null);
         } catch (Exception e) {
             throw new ApiException(EXCEPTION_MESSAGE, null);
         }
@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
         //try to make call
         String url = ApiHelper.GET_USER;
         try {
-            ApiHelper.get(url, context, UsersList.class, null);
+            ApiHelper.get(url, context, UsersList.class, null, null);
         } catch (Exception e) {
             throw new ApiException(EXCEPTION_MESSAGE, null);
         }

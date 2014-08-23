@@ -2,6 +2,7 @@ package cats.space.laser.toot_android.api;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -286,6 +287,8 @@ public class ApiHelper {
             Log.e("error", "Could not execute API HttpRequest.", e);
         } catch (JsonSyntaxException e) {
             Log.e("error", "Could not parse JSON response.", e);
+        } catch (Exception e) {
+            Log.e("error", e.getMessage());
         }
 
         return result;
