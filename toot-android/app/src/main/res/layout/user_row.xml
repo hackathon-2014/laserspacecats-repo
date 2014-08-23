@@ -2,7 +2,7 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 android:layout_width="match_parent"
-android:layout_height="wrap_content"
+android:layout_height="100dp"
 style="@style/user_row">
     <TextView
         android:id="@+id/username"
@@ -21,6 +21,7 @@ style="@style/user_row">
         android:layout_alignParentRight="true"
         android:id="@+id/button_car">
         <ImageButton
+            android:id="@+id/car_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:scaleType="fitCenter"
@@ -40,6 +41,7 @@ style="@style/user_row">
         android:padding="5dp"
         android:id="@+id/button_horn">
         <ImageButton
+            android:id="@+id/horn_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:scaleType="fitCenter"
@@ -58,6 +60,7 @@ style="@style/user_row">
         android:padding="9dp"
         android:id="@+id/button_beer">
         <ImageButton
+            android:id="@+id/beer_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:scaleType="fitCenter"

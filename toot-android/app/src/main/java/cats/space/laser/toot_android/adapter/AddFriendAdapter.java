@@ -1,5 +1,6 @@
 package cats.space.laser.toot_android.adapter;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import cats.space.laser.toot_android.listener.AsyncTaskCompleteListener;
 import cats.space.laser.toot_android.model.ApiBase;
 import cats.space.laser.toot_android.model.User;
 import cats.space.laser.toot_android.util.ApiResponseUtil;
+import cats.space.laser.toot_android.util.DialogUtil;
 
 /**
  * Created by Whitney Champion on 8/23/14.
@@ -53,12 +55,15 @@ public class AddFriendAdapter extends ArrayAdapter<User> {
 
             FrameLayout hornlayout = (FrameLayout) row.findViewById(R.id.button_horn);
             FrameLayout carlayout = (FrameLayout) row.findViewById(R.id.button_car);
+            FrameLayout beerlayout = (FrameLayout) row.findViewById(R.id.button_beer);
 
             hornlayout.setVisibility(View.GONE);
             carlayout.setVisibility(View.GONE);
+            beerlayout.setVisibility(View.GONE);
 
             holder = new UserHolder();
             holder.username = (TextView) row.findViewById(R.id.username);
+            holder.dialog = DialogUtil.getProgressDialog(context, "Adding user...");
 
             row.setTag(holder);
 
@@ -67,20 +72,23 @@ public class AddFriendAdapter extends ArrayAdapter<User> {
         }
 
         holder.username.setText(user.getUsername());
-        holder.username.setOnClickListener(new UsernameOnClickListener(user.getUsername()));
+        holder.username.setOnClickListener(new UsernameOnClickListener(user.getUsername(), holder.dialog));
 
         return row;
     }
 
     static class UserHolder {
         TextView username;
+        ProgressDialog dialog;
     }
 
     public class UsernameOnClickListener implements View.OnClickListener {
 
         String username;
+        ProgressDialog dialog;
 
-        public UsernameOnClickListener(String username) {
+        public UsernameOnClickListener(String username, ProgressDialog dialog) {
+            this.dialog = dialog;
             this.username = username;
         }
 
@@ -97,8 +105,15 @@ public class AddFriendAdapter extends ArrayAdapter<User> {
 
     private class AddUserResponseListener implements AsyncTaskCompleteListener<ApiBase> {
 
+        ProgressDialog dialog;
+
+        public AddUserResponseListener(ProgressDialog dialog) {
+            this.dialog = dialog;
+        }
+
         @Override
         public void onTaskComplete(ApiBase result) {
+            dialog.hide();
             ApiBase response;
             try {
                 response = (ApiBase) ApiResponseUtil.parseResponse(result, ApiBase.class);
