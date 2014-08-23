@@ -2,6 +2,7 @@
 var fs = require('fs');
 var path = require('path');
 var util = require('util');
+var gcmService = require('./services/gcmService');
 var mongoose = require('mongoose');
 var restify = require('restify');
 
@@ -65,6 +66,12 @@ function formatToot(req, res, body) {
 
     res.setHeader('Content-Length', Buffer.byteLength(body));
     return (body);
+}
+
+
+
+function testGCM() {
+    gcmService.sendMessage();
 }
 
 
@@ -251,7 +258,7 @@ function createServer(options) {
     server.use(restify.throttle({
         burst: 10,
         rate: 5,
-        ip: true,
+        ip: true
     }));
 
     // Use the common stuff you probably want
@@ -292,6 +299,7 @@ function createServer(options) {
     server.del('/user/:name', deleteUser);
     server.del('/user/removeAll', deleteAllUsers);
 
+    server.get('/testGCM', testGCM);
 
     // Register a default '/' handler
 
@@ -300,6 +308,7 @@ function createServer(options) {
             'POST    /message/otw',
             'POST    /message/toot',
             'GET     /user',
+            'GET     /testGCM',
             'PUT     /user',
             'POST    /user',
             'GET     /user/removeAll',
