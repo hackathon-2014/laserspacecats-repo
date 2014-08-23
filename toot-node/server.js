@@ -141,41 +141,40 @@ function sendToot(req, res, next) {
         return;
     }
 
-    var destinationUser = models.User.findOne({_id: req.params.id}, function(err,obj) { 
+    models.User.findOne({_id: req.params.id}, function(err,obj) { 
         if (err) {
             req.log.warn(err, 'getUser: failed to load user');
             next(new FailedToLoadError());
             return;
-        }
-    });
-
-    var toot = new models.Toot(
-        { 
-            origin: req.params.origin,
-            destination: destinationUser.name,
-            classification: req.params.type,
-            eta: 5
-        }
-    );
-
-    gcmService.sendMessage(destinationUser.registrationId, function callback(err, data) {
-        if(err) {
-            req.log.warn(err, 'failed to send toot');
-            res.send(400, toot);
-            next(new FailedToSendTootError());
-            return;
         } else {
-            toot.save(function (err, fluffy) {
-                if (err) {
-                    req.log.debug({error: err}, 'sendToot: failure');
+            gcmService.sendMessage(obj.registrationId, function callback(err, data) {
+                if(err) {
+                    req.log.warn(err, 'failed to send toot');
                     res.send(400, toot);
-                    next();
+                    next(new FailedToSendTootError());
+                    return;
                 } else {
-                    req.log.debug({toot: toot}, 'sendToot: success');
-                    res.send(200, toot);
-                    next();
+                    var toot = new models.Toot(
+                        { 
+                            origin: req.params.origin,
+                            destination: obj.name,
+                            classification: req.params.type,
+                            eta: 5
+                        }
+                    );
+                    toot.save(function (err, fluffy) {
+                        if (err) {
+                            req.log.debug({error: err}, 'sendToot: failure');
+                            res.send(400, toot);
+                            next();
+                        } else {
+                            req.log.debug({toot: toot}, 'sendToot: success');
+                            res.send(200, toot);
+                            next();
+                        }
+                    }); 
                 }
-            }); 
+            });
         }
     });
 }
