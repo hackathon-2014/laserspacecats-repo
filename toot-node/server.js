@@ -130,25 +130,11 @@ function authenticate(req, res, next) {
         next(new restify.ForbiddenError('invalid credentials'));
         return;
     }
-
     next();
 }
 
 
 ///--- API
-/**
- * Note this handler looks in `req.params`, which means we can load request
- * parameters in a "mixed" way, like:
- *
- * POST /toot?name=foo HTTP/1.1
- * Host: localhost
- * Content-Type: application/json
- * Content-Length: ...
- *
- * {"destination": "Whitney"}
- *
- * Which would have `destination` and `origin` available in req.params
- */
 function sendToot(req, res, next) {
     if (!req.params.username) {
         req.log.warn('Missing Destination');
@@ -168,22 +154,23 @@ function sendToot(req, res, next) {
         { 
             origin: req.params.origin,
             destination: destinationUser.name,
-            classification: 'arrival',
+            classification: req.params.type,
             eta: 5
         }
     );
 
-    
-
     gcmService.sendMessage(destinationUser.registrationId, function callback(err, data) {
         if(err) {
             req.log.warn(err, 'failed to send toot');
+            res.send(400, toot);
             next(new FailedToSendTootError());
             return;
         } else {
             toot.save(function (err, fluffy) {
                 if (err) {
-                    return console.error(err);
+                    req.log.debug({error: err}, 'sendToot: failure');
+                    res.send(400, toot);
+                    next();
                 } else {
                     req.log.debug({toot: toot}, 'sendToot: success');
                     res.send(200, toot);
@@ -192,29 +179,6 @@ function sendToot(req, res, next) {
             }); 
         }
     });
-
-    
-}
-
-function sendOTW(req, res, next) {
-    if (!req.params.destination) {
-        req.log.warn({params: p}, 'createToot: missing destination');
-        next(new MissingDestination());
-        return;
-    }
-
-    var toot = new models.Toot(
-        { 
-            origin: req.params.origin,
-            destination: req.params.destination,
-            classification: 'otw',
-            eta: req.params.eta
-        }
-    );
-
-    toot.save(function (err, fluffy) {
-        if (err) return console.error(err);
-    }); 
 }
 
 function getUser(req, res, next) {
@@ -222,6 +186,7 @@ function getUser(req, res, next) {
         if (err) {
             req.log.warn(err, 'getUser: failed to load user');
             next(new FailedToLoadError());
+            res.send(400, toot);
             return;
         } else {
             req.log.debug({user: obj}, 'getUser: done');
@@ -261,7 +226,31 @@ function createUser(req, res, next) {
 }
 
 function updateUser(req, res, next) {
-    
+    models.User.findOne({username: req.params.username}, function(err,obj) { 
+        if (err) {
+            req.log.warn(err, 'getUser: failed to load user');
+            next(new FailedToLoadError());
+            res.send(400, toot);
+            return;
+        } else {
+            obj.username = req.params.username;
+            obj.password = req.params.password;
+            obj.registrationId = req.params.registrationId;
+            obj.friends = req.params.friends;
+            obj.save(function (err, fluffy) {
+                if (err) {
+                    req.log.warn('updateUser: failed to save');
+                    res.send(400, user);
+                    next(new FailedToSaveError());
+                    return;
+                } else {
+                    req.log.debug({user: obj}, 'updateUser: done');
+                    res.send(200, obj);
+                    next();
+                }
+            }); 
+        }
+    });
 }
 
 function deleteUser(req, res, next) {
@@ -336,8 +325,6 @@ function createServer(options) {
     server.use(authenticate);
 
     /// Now the real handlers. Here we just CRUD on TODO blobs
-
-    server.post('/message/otw', sendOTW);
     server.post('/message/toot', sendToot);
   
     server.post('/login', login)
@@ -356,7 +343,6 @@ function createServer(options) {
 
     server.get('/', function root(req, res, next) {
         var routes = [
-            'POST    /message/otw',
             'POST    /message/toot',
             'GET     /user',
             'GET     /testGCM',
