@@ -195,6 +195,7 @@ public class LoginActivity extends Activity {
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                 } else {
+                    dialog.hide();
                     Toast.makeText(context,R.string.invalid_login,Toast.LENGTH_SHORT).show();
                 }
             } catch (ApiException e) { //something bad happened
