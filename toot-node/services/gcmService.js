@@ -6,10 +6,10 @@ gcmService.sendMessage = function sendMessage(regId, userName, toot, callback) {
 
     var message = new gcm.Message();
     //sparc
-    var sender = new gcm.Sender('AIzaSyDAA_igAhJYYSym4rv0127lkVpWfL9tCHg');
+//    var sender = new gcm.Sender('AIzaSyDAA_igAhJYYSym4rv0127lkVpWfL9tCHg');
 
     //prod
-//    var sender = new gcm.Sender('AIzaSyBAyevhUYFImGA8NjvMoztM9JRFfFAP46c');
+    var sender = new gcm.Sender('AIzaSyBAyevhUYFImGA8NjvMoztM9JRFfFAP46c');
 
     var registrationIds = [];
 

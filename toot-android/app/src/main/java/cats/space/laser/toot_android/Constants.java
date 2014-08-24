@@ -6,10 +6,10 @@ package cats.space.laser.toot_android;
 public class Constants {
 
     //sparc
-    public static final String API_URL = "http://192.168.8.17:8080";
+//    public static final String API_URL = "http://192.168.8.17:8080";
 
     //prod
-    //public static final String API_URL = "http://toot-env.elasticbeanstalk.com:8080";
+    public static final String API_URL = "http://toot-env.elasticbeanstalk.com:8080";
 
     public static final String GOOGLE_API_KEY = "AIzaSyBbsLTp_XnkbExx4c8W4Q31CXhguKFZaIs";
     public static final String API_ERROR_MESSAGE = "\"errorMessage\":";
