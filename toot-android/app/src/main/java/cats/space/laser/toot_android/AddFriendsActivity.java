@@ -93,6 +93,9 @@ public class AddFriendsActivity extends Activity {
 
             if (users.getUsers().length!=0) {
                 userListView.setAdapter(userAdapter);
+                userListView.setVisibility(View.VISIBLE);
+                TextView empty = (TextView) findViewById(R.id.empty);
+                empty.setVisibility(View.GONE);
             } else {
                 userListView.setVisibility(View.GONE);
                 TextView empty = (TextView) findViewById(R.id.empty);
