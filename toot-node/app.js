@@ -1,4 +1,3 @@
-
 var path = require('path');
 var util = require('util');
 var restify = require('restify');
@@ -121,6 +120,7 @@ function usage(msg) {
     // First setup our database
     // Database Init
     mongoose.connect('mongodb://localhost/test');
+    // mongoose.connect('mongodb://tootadmin:tootsie@host:54.86.59.200:27017');
     var db = mongoose.connection;
     db.on('error', console.error.bind(console, 'connection error:'));
     db.once('open', function callback () {

@@ -1,6 +1,7 @@
 package cats.space.laser.toot_android;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -23,6 +24,7 @@ import cats.space.laser.toot_android.listener.AsyncTaskCompleteListener;
 import cats.space.laser.toot_android.model.ApiBase;
 import cats.space.laser.toot_android.model.User;
 import cats.space.laser.toot_android.util.ApiResponseUtil;
+import cats.space.laser.toot_android.util.DialogUtil;
 import cats.space.laser.toot_android.util.SharedPreferencesUtil;
 import cats.space.laser.toot_android.util.Util;
 
@@ -36,6 +38,7 @@ public class LoginActivity extends Activity {
     private String regId;
     private EditText username;
     private EditText password;
+    private ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,6 +140,9 @@ public class LoginActivity extends Activity {
 
     private void startLogin() {
 
+        dialog = DialogUtil.getProgressDialog(LoginActivity.this,"Logging in...");
+        dialog.show();
+
         UserService userService = new UserServiceImpl();
 
         // login
@@ -150,6 +156,8 @@ public class LoginActivity extends Activity {
 
     private void startSignUp() {
 
+        dialog = DialogUtil.getProgressDialog(LoginActivity.this,"Creating your user...");
+        dialog.show();
         UserService userService = new UserServiceImpl();
 
         // check to see if user exists
@@ -180,6 +188,7 @@ public class LoginActivity extends Activity {
             try {
                 response = (User) ApiResponseUtil.parseResponse(result, User.class);
                 if (response.get_id()!=null) {
+                    dialog.hide();
                     SharedPreferencesUtil.setLoggedIn(true);
                     SharedPreferencesUtil.saveUser(response);
                     Intent intent = new Intent(context,MainActivity.class);
@@ -201,6 +210,7 @@ public class LoginActivity extends Activity {
             UserService userService = new UserServiceImpl();
             Boolean response;
             response = (Boolean) result;
+            dialog.hide();
             if (result==null) { // user doesn't exist, create user
                 // create user
                 try {

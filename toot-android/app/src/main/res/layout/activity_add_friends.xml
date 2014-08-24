@@ -10,6 +10,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="20dp"
+            android:layout_gravity="center_horizontal"
+            android:text="No users found! Click the + to add friends!"
+            android:padding="40dp"
+            android:gravity="center_horizontal"
+            android:id="@+id/empty"
+            android:visibility="gone"/>
         <ListView
             android:layout_width="match_parent"
             android:layout_height="match_parent"

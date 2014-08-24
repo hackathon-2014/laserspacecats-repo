@@ -74,11 +74,12 @@ public class AddFriendAdapter extends ArrayAdapter<User> {
             holder = (UserHolder)row.getTag();
         }
 
-        holder.dialog = DialogUtil.getProgressDialog(context, "Adding user...");
+        holder.dialog = DialogUtil.getProgressDialog(context, "Adding friend...");
 
         holder.username.setText(user.getUsername());
         holder.username.setTypeface(type);
         holder.username.setOnClickListener(new UsernameOnClickListener(user.get_id(), holder.dialog));
+        row.setOnClickListener(new UsernameOnClickListener(user.get_id(),holder.dialog));
 
         return row;
     }

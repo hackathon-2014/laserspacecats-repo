@@ -1,10 +1,13 @@
 package cats.space.laser.toot_android;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +21,7 @@ import cats.space.laser.toot_android.model.ApiBase;
 import cats.space.laser.toot_android.model.User;
 import cats.space.laser.toot_android.model.UsersList;
 import cats.space.laser.toot_android.util.ApiResponseUtil;
+import cats.space.laser.toot_android.util.DialogUtil;
 import cats.space.laser.toot_android.util.SharedPreferencesUtil;
 
 /**
@@ -30,7 +34,7 @@ public class AddFriendsActivity extends Activity {
     private AddFriendAdapter userAdapter;
     private ListView userListView;
     private Object[] existingUsers;
-
+    private ProgressDialog dialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +49,8 @@ public class AddFriendsActivity extends Activity {
         UserService userService = new UserServiceImpl();
         userListView = (ListView) findViewById(R.id.users);
 
+        dialog = DialogUtil.getProgressDialog(context,"Getting users...");
+        dialog.show();
         try {
             userService.getUsersAsynchronous(user, context, new GetUsersListener());
         } catch (ApiException e) {
@@ -56,10 +62,11 @@ public class AddFriendsActivity extends Activity {
         @Override
         public void onTaskComplete(ApiBase result) {
 
-            // get subscriptions
+            // get friends
             UsersList users;
             try {
                 users = (UsersList) ApiResponseUtil.parseResponse(result, UsersList.class);
+                dialog.hide();
             } catch (ApiException e) {
                 return;
             }
@@ -86,6 +93,10 @@ public class AddFriendsActivity extends Activity {
 
             if (users.getUsers().length!=0) {
                 userListView.setAdapter(userAdapter);
+            } else {
+                userListView.setVisibility(View.GONE);
+                TextView empty = (TextView) findViewById(R.id.empty);
+                empty.setVisibility(View.VISIBLE);
             }
         }
 
