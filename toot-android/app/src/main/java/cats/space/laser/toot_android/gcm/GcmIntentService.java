@@ -69,7 +69,7 @@ public class GcmIntentService extends IntentService {
         // build the notification
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.icon)
+                        .setSmallIcon(R.drawable.icon_small)
                         .setAutoCancel(true)
                         .setLights(0xFF73da66, 1000, 2000)
                         .setContentTitle(userName)
