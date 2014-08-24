@@ -24,6 +24,7 @@ import cats.space.laser.toot_android.listener.AsyncTaskCompleteListener;
 import cats.space.laser.toot_android.model.ApiBase;
 import cats.space.laser.toot_android.model.User;
 import cats.space.laser.toot_android.util.ApiResponseUtil;
+import cats.space.laser.toot_android.util.DialogUtil;
 import cats.space.laser.toot_android.util.SharedPreferencesUtil;
 import cats.space.laser.toot_android.util.Util;
 
@@ -139,6 +140,7 @@ public class LoginActivity extends Activity {
 
     private void startLogin() {
 
+        dialog = DialogUtil.getProgressDialog(LoginActivity.this,"Logging in...");
         dialog.show();
 
         UserService userService = new UserServiceImpl();
@@ -154,6 +156,7 @@ public class LoginActivity extends Activity {
 
     private void startSignUp() {
 
+        dialog = DialogUtil.getProgressDialog(LoginActivity.this,"Creating your user...");
         dialog.show();
         UserService userService = new UserServiceImpl();
 
@@ -192,6 +195,7 @@ public class LoginActivity extends Activity {
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                 } else {
+                    dialog.hide();
                     Toast.makeText(context,R.string.invalid_login,Toast.LENGTH_SHORT).show();
                 }
             } catch (ApiException e) { //something bad happened

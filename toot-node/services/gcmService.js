@@ -5,7 +5,12 @@ var gcmService = {};
 gcmService.sendMessage = function sendMessage(regId, userName, toot, callback) {
 
     var message = new gcm.Message();
-    var sender = new gcm.Sender('AIzaSyDAA_igAhJYYSym4rv0127lkVpWfL9tCHg');
+    //sparc
+//    var sender = new gcm.Sender('AIzaSyDAA_igAhJYYSym4rv0127lkVpWfL9tCHg');
+
+    //prod
+    var sender = new gcm.Sender('AIzaSyBAyevhUYFImGA8NjvMoztM9JRFfFAP46c');
+
     var registrationIds = [];
 
     if(toot.classification === 'arrival') {

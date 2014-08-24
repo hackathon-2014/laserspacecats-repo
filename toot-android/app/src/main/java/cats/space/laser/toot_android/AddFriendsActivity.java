@@ -3,10 +3,14 @@ package cats.space.laser.toot_android;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ListView;
+import android.widget.TextView;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 import cats.space.laser.toot_android.adapter.AddFriendAdapter;
 import cats.space.laser.toot_android.api.ApiException;
@@ -29,14 +33,18 @@ public class AddFriendsActivity extends Activity {
     private Context context;
     private AddFriendAdapter userAdapter;
     private ListView userListView;
+    private Object[] existingUsers;
     private ProgressDialog dialog;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_friends);
         context = this;
 
+        Intent intent=this.getIntent();
+        Bundle bundle=intent.getExtras();
+
+        existingUsers = (Object[]) bundle.getSerializable("currentFriends");
         User user = SharedPreferencesUtil.getUser();
         UserService userService = new UserServiceImpl();
         userListView = (ListView) findViewById(R.id.users);
@@ -63,11 +71,32 @@ public class AddFriendsActivity extends Activity {
                 return;
             }
 
+            List<User> filteredUsers = new ArrayList<User>();
+            for (User user: users.getUsers()) {
+                boolean found = false;
+
+                for(Object existingFriend:existingUsers) {
+                    if (existingFriend instanceof User) {
+                        if (user.get_id().equals(((User)existingFriend).get_id())) {
+                            found = true;
+                        }
+                    }
+                }
+
+                if (!found) {
+                    filteredUsers.add(user);
+                }
+            }
+
             // populate adapter and attached it to the list view
-            userAdapter = new AddFriendAdapter(context, R.layout.add_user_row, Arrays.asList(users.getUsers()));
+            userAdapter = new AddFriendAdapter(context, R.layout.add_user_row, filteredUsers);
 
             if (users.getUsers().length!=0) {
                 userListView.setAdapter(userAdapter);
+            } else {
+                userListView.setVisibility(View.GONE);
+                TextView empty = (TextView) findViewById(R.id.empty);
+                empty.setVisibility(View.VISIBLE);
             }
         }
 

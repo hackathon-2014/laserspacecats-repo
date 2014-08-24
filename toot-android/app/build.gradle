@@ -12,6 +12,15 @@ android {
         exclude 'META-INF/NOTICE.txt'
     }
 
+    signingConfigs {
+        release {
+            storeFile file("debug.keystore")
+            storePassword ""
+            keyAlias "androiddebugkey"
+            keyPassword ""
+        }
+    }
+
     defaultConfig{
         applicationId "cats.space.laser.toot_android"
         minSdkVersion 19
