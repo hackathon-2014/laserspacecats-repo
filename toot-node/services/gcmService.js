@@ -9,7 +9,7 @@ gcmService.sendMessage = function sendMessage(regId, userName, toot, callback) {
 //    var sender = new gcm.Sender('AIzaSyDAA_igAhJYYSym4rv0127lkVpWfL9tCHg');
 
     //prod
-    var sender = new gcm.Sender('AIzaSyBAyevhUYFImGA8NjvMoztM9JRFfFAP46c');
+    var sender = new gcm.Sender('AIzaSyBufT1N4umuoHE2ka89uB61DoSkMMTz-B0');
 
     var registrationIds = [];
 
