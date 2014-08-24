@@ -23,9 +23,7 @@ import cats.space.laser.toot_android.api.ApiException;
 import cats.space.laser.toot_android.api.Impl.UserServiceImpl;
 import cats.space.laser.toot_android.api.UserService;
 import cats.space.laser.toot_android.listener.AsyncTaskCompleteListener;
-import cats.space.laser.toot_android.model.ApiBase;
 import cats.space.laser.toot_android.model.User;
-import cats.space.laser.toot_android.util.ApiResponseUtil;
 import cats.space.laser.toot_android.util.DialogUtil;
 import cats.space.laser.toot_android.util.SharedPreferencesUtil;
 
@@ -39,6 +37,7 @@ public class MainActivity extends Activity {
     private ListView userListView;
     private UserService userService;
     private ImageButton addButton;
+    private User[] users;
     private User user;
     private ProgressDialog dialog;
 
@@ -47,9 +46,6 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = this;
-
-        addButton = (ImageButton) findViewById(R.id.add);
-        addButton.setOnClickListener(new AddFriendOnClickListener());
 
         user = SharedPreferencesUtil.getUser();
         userService = new UserServiceImpl();
@@ -70,6 +66,11 @@ public class MainActivity extends Activity {
         @Override
         public void onClick(View view) {
             Intent intent = new Intent(context,AddFriendsActivity.class);
+
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("currentFriends", users);
+            intent.putExtras(bundle);
+
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
@@ -144,7 +145,7 @@ public class MainActivity extends Activity {
 
             if (result!=null) {
                 // get friends
-                User[] users = result;
+                users = result;
 
                 // populate adapter and attached it to the list view
                 userAdapter = new UserAdapter(context, R.layout.user_row, Arrays.asList(users));
@@ -162,16 +163,6 @@ public class MainActivity extends Activity {
 
         }
 
-    }
-
-    private class AddFriendOnClickListener implements View.OnClickListener {
-
-        @Override
-        public void onClick(View v) {
-            Intent intent = new Intent(context, AddFriendsActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-        }
     }
 
     @Override
